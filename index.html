@@ -621,13 +621,57 @@ async function registrar() {
     const correoUser = document.getElementById("correo").value;
     const passUser = document.getElementById("password").value;
 
-    const { data, error } = await cliente.auth.signUp({
+    async function registrar() {
 
-        email: correoUser,
-        password: passUser
+    const { data, error } = await cliente
+        .from("usuarios")
+        .insert({
+            correo: correo.value,
+            password: password.value,
+            rol: rol.value
+        })
+        .select()
+        .single();
 
-    });
+    if (error) {
+        mensaje.innerHTML = "Ese correo ya existe";
+        mensaje.style.color = "red";
+        return;
+    }
 
+    const id = data.id;
+
+    if (rol.value === "estudiante") {
+
+        await cliente.from("estudiantes").insert({
+            id,
+            nombres: nombres.value,
+            apellidos: apellidos.value,
+            ru: ru.value,
+            carrera: carrera.value,
+            semestre: semestre.value,
+            paralelo: paralelo.value,
+            turno: turno.value
+        });
+
+    } else {
+
+        await cliente.from("docentes").insert({
+            id,
+            nombres: nombres.value,
+            apellidos: apellidos.value,
+            carrera: dcarrera.value,
+            materia: materia.value,
+            aula: aula.value,
+            paralelo: dparalelo.value,
+            turno: dturno.value
+        });
+
+    }
+
+    mensaje.innerHTML = "Cuenta creada correctamente";
+    mensaje.style.color = "green";
+}
     if (error) {
 
         mensaje.innerHTML = error.message;
@@ -701,43 +745,27 @@ document
 
 async function loginUsuario() {
 
-    const { data, error } =
-    await cliente.auth.signInWithPassword({
-
-        email: loginCorreo.value,
-        password: loginPass.value
-
-    });
+    const { data, error } = await cliente
+        .from("usuarios")
+        .select("*")
+        .eq("correo", loginCorreo.value)
+        .eq("password", loginPass.value)
+        .single();
 
     if (error) {
-
         mensaje.innerHTML = "Correo o contraseña incorrectos";
         mensaje.style.color = "red";
         return;
-
     }
-
-    const { data: usuario } =
-    await cliente
-
-        .from("usuarios")
-        .select("*")
-        .eq("id", data.user.id)
-        .single();
 
     document.getElementById("inicio").style.display = "none";
     document.getElementById("dashboard").style.display = "flex";
 
-    if (usuario.rol === "estudiante") {
-
-        cargarEstudiante(data.user.id);
-
+    if (data.rol === "estudiante") {
+        cargarEstudiante(data.id);
     } else {
-
-        cargarDocente(data.user.id);
-
+        cargarDocente(data.id);
     }
-
 }
 
 /* =====================================================

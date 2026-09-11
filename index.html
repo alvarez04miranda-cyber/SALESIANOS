@@ -753,21 +753,27 @@ async function loginUsuario() {
         .single();
 
     if (error) {
+
         mensaje.innerHTML = "Correo o contraseña incorrectos";
         mensaje.style.color = "red";
         return;
+
     }
 
     document.getElementById("inicio").style.display = "none";
     document.getElementById("dashboard").style.display = "flex";
 
     if (data.rol === "estudiante") {
-        cargarEstudiante(data.id);
-    } else {
-        cargarDocente(data.id);
-    }
-}
 
+        cargarEstudiante(data.id);
+
+    } else {
+
+        cargarDocente(data.id);
+
+    }
+
+}
 /* =====================================================
    PERFIL DEL ESTUDIANTE
 ===================================================== */

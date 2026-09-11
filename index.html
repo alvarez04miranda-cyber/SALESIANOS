@@ -2,413 +2,547 @@
 <html lang="es">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>USB Campus | Universidad Salesiana de Bolivia</title>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SALESIANOS CAMPUS</title>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', sans-serif;
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',sans-serif;
         }
 
-        body {
-            background: #EEF3FB;
+        body{
+            background:#EEF3FB;
         }
 
-        header {
-            height: 70px;
-            background: #003399;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 30px;
+        /*================ ENCABEZADO ================*/
+
+        header{
+            background:#003399;
+            color:white;
+            height:70px;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:0 30px;
         }
 
-        header h2 {
-            font-size: 22px;
+        header h1{
+            font-size:24px;
         }
 
-        header p {
-            font-size: 13px;
+        /*================ LOGIN ================*/
+
+        .contenedor{
+            display:flex;
+            min-height:calc(100vh - 70px);
         }
 
-        .container {
-            display: flex;
-            min-height: calc(100vh - 70px);
+        .izquierda{
+            flex:1;
+            background:linear-gradient(135deg,#003399,#1768ff);
+            color:white;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            padding:40px;
         }
 
-        .left {
-            flex: 1;
-            background: linear-gradient(135deg, #003399, #1F6BFF);
-            color: white;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+        .izquierda h2{
+            font-size:48px;
+            margin-bottom:20px;
         }
 
-        .left h1 {
-            font-size: 50px;
-            margin-bottom: 20px;
+        .izquierda p{
+            text-align:center;
+            line-height:28px;
+            max-width:420px;
         }
 
-        .left p {
-            text-align: center;
-            line-height: 28px;
-            max-width: 420px;
+        .derecha{
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:30px;
         }
 
-        .right {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px;
+        .card{
+            width:100%;
+            max-width:460px;
+            background:white;
+            border-radius:20px;
+            padding:30px;
+            box-shadow:0 15px 30px rgba(0,0,0,.15);
         }
 
-        .card {
-            width: 100%;
-            max-width: 480px;
-            background: white;
-            border-radius: 18px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, .15);
+        .tabs{
+            display:flex;
+            margin-bottom:20px;
         }
 
-        .tabs {
-            display: flex;
-            margin-bottom: 20px;
+        .tabs button{
+            flex:1;
+            padding:12px;
+            border:none;
+            cursor:pointer;
+            background:#ddd;
+            font-weight:bold;
         }
 
-        .tabs button {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            background: #E4E4E4;
-            cursor: pointer;
-            font-weight: bold;
+        .activo{
+            background:#003399!important;
+            color:white;
         }
 
-        .active {
-            background: #003399 !important;
-            color: white;
+        h3{
+            color:#003399;
+            text-align:center;
+            margin-bottom:20px;
         }
 
-        h3 {
-            color: #003399;
-            text-align: center;
-            margin-bottom: 20px;
+        input,select{
+            width:100%;
+            padding:12px;
+            margin-bottom:12px;
+            border-radius:8px;
+            border:1px solid #ccc;
         }
 
-        input,
-        select {
-            width: 100%;
-            padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #CCC;
-            margin-bottom: 12px;
-            outline: none;
+        .boton{
+            width:100%;
+            padding:13px;
+            border:none;
+            border-radius:8px;
+            background:#003399;
+            color:white;
+            cursor:pointer;
+            font-size:16px;
         }
 
-        input:focus,
-        select:focus {
-            border-color: #003399;
+        .boton:hover{
+            background:#002366;
         }
 
-        .btn {
-            width: 100%;
-            padding: 13px;
-            border: none;
-            border-radius: 8px;
-            background: #003399;
-            color: white;
-            cursor: pointer;
-            font-size: 16px;
-            transition: .3s;
+        .oculto{
+            display:none;
         }
 
-        .btn:hover {
-            background: #002366;
+        #mensaje{
+            text-align:center;
+            margin-top:15px;
+            font-weight:bold;
         }
 
-        .hidden {
-            display: none;
+        /*================ DASHBOARD ================*/
+
+        #dashboard{
+            display:none;
+            height:calc(100vh - 70px);
         }
 
-        #mensaje {
-            margin-top: 15px;
-            text-align: center;
-            font-weight: bold;
+        .sidebar{
+            width:240px;
+            background:white;
+            padding:20px;
+            border-right:1px solid #ddd;
         }
 
-        .dashboard {
-            display: none;
-            padding: 25px;
+        .perfil{
+            text-align:center;
+            margin-bottom:25px;
         }
 
-        .sidebar {
-            width: 250px;
-            background: white;
-            padding: 20px;
-            border-right: 1px solid #DDD;
+        .foto{
+            width:90px;
+            height:90px;
+            border-radius:50%;
+            background:#003399;
+            margin:auto;
+            margin-bottom:10px;
         }
 
-        .profile {
-            text-align: center;
-            margin-bottom: 30px;
+        .menu button{
+            width:100%;
+            padding:12px;
+            margin-bottom:8px;
+            border:none;
+            background:#EEF3FB;
+            border-radius:8px;
+            cursor:pointer;
+            text-align:left;
         }
 
-        .avatar {
-            width: 90px;
-            height: 90px;
-            border-radius: 50%;
-            background: #003399;
-            margin: auto;
-            margin-bottom: 10px;
+        .contenido{
+            flex:1;
+            padding:25px;
+            overflow:auto;
         }
 
-        .menu button {
-            width: 100%;
-            margin-bottom: 10px;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            background: #EEF3FB;
-            cursor: pointer;
-            text-align: left;
+        .vista{
+            display:none;
         }
 
-        .content {
-            flex: 1;
-            padding: 25px;
+        .mostrar{
+            display:block;
         }
 
-        .section {
-            display: none;
+        .tarjeta{
+            background:white;
+            padding:20px;
+            border-radius:15px;
+            margin-bottom:20px;
+            box-shadow:0 4px 10px rgba(0,0,0,.08);
         }
 
-        .section.activeSection {
-            display: block;
+        table{
+            width:100%;
+            border-collapse:collapse;
         }
 
-        .cardInfo {
-            background: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, .08);
+        th,td{
+            padding:10px;
+            border-bottom:1px solid #eee;
+            text-align:center;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
+        @media(max-width:900px){
 
-        table th,
-        table td {
-            padding: 10px;
-            border-bottom: 1px solid #EEE;
-            text-align: center;
-        }
-
-        @media(max-width:900px) {
-
-            .container {
-                flex-direction: column;
+            .contenedor{
+                flex-direction:column;
             }
 
-            .left {
-                min-height: 250px;
+            .izquierda{
+                min-height:250px;
             }
 
-            .left h1 {
-                font-size: 36px;
+            #dashboard{
+                flex-direction:column;
             }
 
-            header {
-                flex-direction: column;
-                height: auto;
-                padding: 15px;
+            .sidebar{
+                width:100%;
             }
 
         }
+
     </style>
 
 </head>
 
 <body>
 
-    <header>
+<header>
 
-        <div>
-            <h2>USB Campus</h2>
-            <p>Universidad Salesiana de Bolivia</p>
-        </div>
+    <h1>SALESIANOS CAMPUS</h1>
 
-        <div>
-            Programación Avanzada
-        </div>
+    <p>Universidad Salesiana de Bolivia</p>
 
-    </header>
+</header>
 
-    <!-- LOGIN -->
+<!--============== LOGIN ==============-->
 
-    <div id="inicio" class="container">
+<div id="inicio" class="contenedor">
 
-        <div class="left">
+    <div class="izquierda">
 
-            <h1>USB Campus</h1>
+        <h2>USB CAMPUS</h2>
 
-            <p>
-                Sistema Académico Universitario
+        <p>
 
-                <br><br>
+            Sistema Académico Universitario.
 
-                Consulta tus notas, recibe avisos de tus docentes y forma equipos de trabajo desde una sola plataforma.
-            </p>
+            Consulta tus notas, recibe avisos de tus docentes y forma equipos de trabajo.
 
-        </div>
+        </p>
 
-        <div class="right">
+    </div>
 
-            <div class="card">
+    <div class="derecha">
 
-                <div class="tabs">
+        <div class="card">
 
-                    <button id="btnLogin" class="active">
-                        Iniciar Sesión
-                    </button>
+            <div class="tabs">
 
-                    <button id="btnRegistro">
-                        Crear Cuenta
-                    </button>
+                <button id="btnLogin" class="activo">
+                    Iniciar
+                </button>
 
-                </div>
+                <button id="btnRegistro">
+                    Crear Cuenta
+                </button>
 
-                <!-- LOGIN -->
+            </div>
 
-                <div id="login">
+            <!-- LOGIN -->
 
-                    <h3>Bienvenido</h3>
+            <div id="login">
 
-                    <input id="loginCorreo"
-                        type="email"
-                        placeholder="Correo institucional">
+                <h3>Iniciar Sesión</h3>
 
-                    <input id="loginPass"
-                        type="password"
-                        placeholder="Contraseña">
+                <input
+                    id="loginCorreo"
+                    type="email"
+                    placeholder="Correo">
 
-                    <button class="btn" id="ingresar">
-                        Ingresar
-                    </button>
+                <input
+                    id="loginPass"
+                    type="password"
+                    placeholder="Contraseña">
 
-                </div>
+                <button id="ingresar" class="boton">
+                    Ingresar
+                </button>
 
-                <!-- REGISTRO -->
+            </div>
 
-                <div id="registro" class="hidden">
+            <!-- REGISTRO -->
 
-                    <h3>Crear Cuenta</h3>
+            <div id="registro" class="oculto">
 
-                    <select id="rol">
-                        <option value="estudiante">Estudiante</option>
-                        <option value="docente">Docente</option>
+                <h3>Crear Cuenta</h3>
+
+                <select id="rol">
+
+                    <option value="estudiante">
+                        Estudiante
+                    </option>
+
+                    <option value="docente">
+                        Docente
+                    </option>
+
+                </select>
+
+                <input id="nombres" placeholder="Nombres">
+
+                <input id="apellidos" placeholder="Apellidos">
+
+                <input
+                    id="correo"
+                    type="email"
+                    placeholder="Correo">
+
+                <input
+                    id="password"
+                    type="password"
+                    placeholder="Contraseña">
+
+                <!-- ESTUDIANTE -->
+
+                <div id="datosEstudiante">
+
+                    <input id="ru" placeholder="RU">
+
+                    <select id="carrera">
+
+                        <option>Ingeniería de Sistemas</option>
+                        <option>Derecho</option>
+                        <option>Contaduría</option>
+
                     </select>
 
-                    <input id="nombres" placeholder="Nombres">
+                    <select id="semestre">
 
-                    <input id="apellidos" placeholder="Apellidos">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
 
-                    <input id="correo"
-                        type="email"
-                        placeholder="Correo">
+                    </select>
 
-                    <input id="password"
-                        type="password"
-                        placeholder="Contraseña">
+                    <select id="paralelo">
 
-                    <!-- CAMPOS ESTUDIANTE -->
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
 
-                    <div id="estudianteCampos">
+                    </select>
 
-                        <input id="ru" placeholder="RU">
+                    <select id="turno">
 
-                        <select id="carrera">
-                            <option>Ingeniería de Sistemas</option>
-                            <option>Derecho</option>
-                            <option>Contaduría</option>
-                        </select>
+                        <option>Mañana</option>
+                        <option>Tarde</option>
+                        <option>Noche</option>
 
-                        <select id="semestre">
-                            <option>1</option>
-                            <option>2</option>
-                            <option>3</option>
-                            <option>4</option>
-                            <option>5</option>
-                            <option>6</option>
-                            <option>7</option>
-                            <option>8</option>
-                            <option>9</option>
-                            <option>10</option>
-                        </select>
-
-                        <select id="paralelo">
-                            <option>A</option>
-                            <option>B</option>
-                            <option>C</option>
-                        </select>
-
-                        <select id="turno">
-                            <option>Mañana</option>
-                            <option>Tarde</option>
-                            <option>Noche</option>
-                        </select>
-
-                    </div>
-
-                    <!-- CAMPOS DOCENTE -->
-
-                    <div id="docenteCampos" class="hidden">
-
-                        <select id="dcarrera">
-                            <option>Ingeniería de Sistemas</option>
-                            <option>Derecho</option>
-                            <option>Contaduría</option>
-                        </select>
-
-                        <input id="materia" placeholder="Materia">
-
-                        <input id="aula" placeholder="Aula">
-
-                        <select id="dparalelo">
-                            <option>A</option>
-                            <option>B</option>
-                            <option>C</option>
-                        </select>
-
-                        <select id="dturno">
-                            <option>Mañana</option>
-                            <option>Tarde</option>
-                            <option>Noche</option>
-                        </select>
-
-                    </div>
-
-                    <button class="btn" id="crearCuenta">
-                        Crear Cuenta
-                    </button>
+                    </select>
 
                 </div>
 
-                <div id="mensaje"></div>
+                <!-- DOCENTE -->
+
+                <div id="datosDocente" class="oculto">
+
+                    <select id="dcarrera">
+
+                        <option>Ingeniería de Sistemas</option>
+                        <option>Derecho</option>
+                        <option>Contaduría</option>
+
+                    </select>
+
+                    <input id="materia" placeholder="Materia">
+
+                    <input id="aula" placeholder="Aula">
+
+                    <select id="dparalelo">
+
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+
+                    </select>
+
+                    <select id="dturno">
+
+                        <option>Mañana</option>
+                        <option>Tarde</option>
+                        <option>Noche</option>
+
+                    </select>
+
+                </div>
+
+                <button id="crearCuenta" class="boton">
+                    Crear Cuenta
+                </button>
+
+            </div>
+
+            <div id="mensaje"></div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!--============== DASHBOARD ==============-->
+
+<div id="dashboard">
+
+    <div class="sidebar">
+
+        <div class="perfil">
+
+            <div class="foto"></div>
+
+            <h3 id="nombreUsuario">Usuario</h3>
+
+            <p id="rolUsuario">Rol</p>
+
+        </div>
+
+        <div class="menu">
+
+            <button data-vista="perfil">
+                🏠 Perfil
+            </button>
+
+            <button data-vista="notas">
+                📝 Notas
+            </button>
+
+            <button data-vista="asistencia">
+                ✅ Asistencia
+            </button>
+
+            <button data-vista="avisos">
+                🔔 Avisos
+            </button>
+
+            <button data-vista="equipos">
+                👥 Equipos
+            </button>
+
+            <button id="salir">
+                🚪 Cerrar Sesión
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="contenido">
+
+        <div id="perfil" class="vista mostrar">
+
+            <div class="tarjeta">
+
+                <h2>Mi Perfil</h2>
+
+                <div id="datosPerfil"></div>
+
+            </div>
+
+        </div>
+
+        <div id="notas" class="vista">
+
+            <div class="tarjeta">
+
+                <h2>Mis Notas</h2>
+
+                <table>
+
+                    <tr>
+                        <th>Parcial</th>
+                        <th>Promedio</th>
+                    </tr>
+
+                    <tbody id="tablaNotas"></tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <div id="asistencia" class="vista">
+
+            <div class="tarjeta">
+
+                <h2>Asistencia</h2>
+
+                <div id="listaAsistencia"></div>
+
+            </div>
+
+        </div>
+
+        <div id="avisos" class="vista">
+
+            <div class="tarjeta">
+
+                <h2>Avisos</h2>
+
+                <div id="listaAvisos"></div>
+
+            </div>
+
+        </div>
+
+        <div id="equipos" class="vista">
+
+            <div class="tarjeta">
+
+                <h2>Equipos</h2>
+
+                <p>Aquí aparecerán los compañeros de trabajo.</p>
 
             </div>
 
@@ -416,149 +550,22 @@
 
     </div>
 
-    <!-- DASHBOARD (se activará después del login) -->
-
-    <div id="dashboard" class="dashboard">
-
-        <div class="sidebar">
-
-            <div class="profile">
-
-                <div class="avatar"></div>
-
-                <h3 id="nombreUsuario">Usuario</h3>
-
-                <p id="rolUsuario">Rol</p>
-
-            </div>
-
-            <div class="menu">
-
-                <button data-section="perfil">🏠 Mi Perfil</button>
-
-                <button data-section="notas">📝 Notas</button>
-
-                <button data-section="asistencia">✅ Asistencia</button>
-
-                <button data-section="avisos">🔔 Avisos</button>
-
-                <button data-section="equipos">👥 Equipos</button>
-
-                <button id="cerrarSesion">🚪 Cerrar sesión</button>
-
-            </div>
-
-        </div>
-
-        <div class="content">
-
-            <div id="perfil" class="section activeSection">
-
-                <div class="cardInfo">
-
-                    <h2>Perfil Universitario</h2>
-
-                    <p>
-                        Aquí aparecerán automáticamente los datos del estudiante o docente.
-                    </p>
-
-                </div>
-
-            </div>
-
-            <div id="notas" class="section">
-
-                <div class="cardInfo">
-
-                    <h2>Notas</h2>
-
-                    <table>
-
-                        <tr>
-                            <th>Parcial</th>
-                            <th>Promedio</th>
-                        </tr>
-
-                        <tr>
-                            <td>Primer</td>
-                            <td>0</td>
-                        </tr>
-
-                        <tr>
-                            <td>Segundo</td>
-                            <td>0</td>
-                        </tr>
-
-                        <tr>
-                            <td>Tercero</td>
-                            <td>0</td>
-                        </tr>
-
-                    </table>
-
-                </div>
-
-            </div>
-
-            <div id="asistencia" class="section">
-
-                <div class="cardInfo">
-
-                    <h2>Asistencia</h2>
-
-                    <p>Se mostrará el historial por fechas.</p>
-
-                </div>
-
-            </div>
-
-            <div id="avisos" class="section">
-
-                <div class="cardInfo">
-
-                    <h2>Avisos del Docente</h2>
-
-                    <p>Los mensajes aparecerán en tiempo real.</p>
-
-                </div>
-
-            </div>
-
-            <div id="equipos" class="section">
-
-                <div class="cardInfo">
-
-                    <h2>Equipos</h2>
-
-                    <p>
-                        Aquí podrás invitar compañeros y aceptar solicitudes.
-                    </p>
-
-                </div>
-
-            </div>
-
-        </div>
-
-    </div>
+</div>
 
     <script>
+/*==================================================
+  CONEXIÓN SUPABASE
+  NO CAMBIES TU URL NI TU ANON KEY
+==================================================*/
 
-/* =====================================================
-   CONEXIÓN SUPABASE
-===================================================== */
-
-const SUPABASE_URL = "https://mksugxmjhhmhupusrwpi.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rc3VneG1qaGhtaHVwdXNyd3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNDEyNjcsImV4cCI6MjEwNDcxNzI2N30.dERPsfuk-_5Sv77mnZF6q1nF-Vz6CCO7bvPWFXhw2m4";
-
-const cliente = supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+const supabaseClient = supabase.createClient(
+    const SUPABASE_URL = "https://mksugxmjhhmhupusrwpi.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rc3VneG1qaGhtaHVwdXNyd3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkxNDEyNjcsImV4cCI6MjEwNDcxNzI2N30.dERPsfuk-_5Sv77mnZF6q1nF-Vz6CCO7bvPWFXhw2m4";
 );
 
-/* =====================================================
-   CAMBIO ENTRE LOGIN Y REGISTRO
-===================================================== */
+/*==================================================
+  CAMBIO ENTRE LOGIN Y REGISTRO
+==================================================*/
 
 const btnLogin = document.getElementById("btnLogin");
 const btnRegistro = document.getElementById("btnRegistro");
@@ -568,336 +575,274 @@ const registro = document.getElementById("registro");
 
 btnLogin.onclick = () => {
 
-    login.classList.remove("hidden");
-    registro.classList.add("hidden");
+    login.classList.remove("oculto");
+    registro.classList.add("oculto");
 
-    btnLogin.classList.add("active");
-    btnRegistro.classList.remove("active");
+    btnLogin.classList.add("activo");
+    btnRegistro.classList.remove("activo");
 
 };
 
 btnRegistro.onclick = () => {
 
-    registro.classList.remove("hidden");
-    login.classList.add("hidden");
+    registro.classList.remove("oculto");
+    login.classList.add("oculto");
 
-    btnRegistro.classList.add("active");
-    btnLogin.classList.remove("active");
+    btnRegistro.classList.add("activo");
+    btnLogin.classList.remove("activo");
 
 };
 
-/* =====================================================
-   MOSTRAR CAMPOS SEGÚN EL ROL
-===================================================== */
-
-const rol = document.getElementById("rol");
+/*==================================================
+  CAMBIO DE ROL
+==================================================*/
 
 rol.onchange = () => {
 
     if (rol.value === "estudiante") {
 
-        estudianteCampos.classList.remove("hidden");
-        docenteCampos.classList.add("hidden");
+        datosEstudiante.classList.remove("oculto");
+        datosDocente.classList.add("oculto");
 
     } else {
 
-        docenteCampos.classList.remove("hidden");
-        estudianteCampos.classList.add("hidden");
+        datosDocente.classList.remove("oculto");
+        datosEstudiante.classList.add("oculto");
 
     }
 
 };
 
-/* =====================================================
-   REGISTRAR USUARIO
-===================================================== */
+/*==================================================
+  REGISTRAR CUENTA
+==================================================*/
 
 document
 .getElementById("crearCuenta")
 .addEventListener("click", registrar);
 
-async function registrar() {
+async function registrar(){
 
-    const correoUser = document.getElementById("correo").value;
-    const passUser = document.getElementById("password").value;
+    const { data, error } =
+    await supabaseClient
 
-    async function registrar() {
+    .from("usuarios")
 
-    const { data, error } = await cliente
-        .from("usuarios")
-        .insert({
-            correo: correo.value,
-            password: password.value,
-            rol: rol.value
-        })
-        .select()
-        .single();
+    .insert({
 
-    if (error) {
-        mensaje.innerHTML = "Ese correo ya existe";
-        mensaje.style.color = "red";
-        return;
-    }
-
-    const id = data.id;
-
-    if (rol.value === "estudiante") {
-
-        await cliente.from("estudiantes").insert({
-            id,
-            nombres: nombres.value,
-            apellidos: apellidos.value,
-            ru: ru.value,
-            carrera: carrera.value,
-            semestre: semestre.value,
-            paralelo: paralelo.value,
-            turno: turno.value
-        });
-
-    } else {
-
-        await cliente.from("docentes").insert({
-            id,
-            nombres: nombres.value,
-            apellidos: apellidos.value,
-            carrera: dcarrera.value,
-            materia: materia.value,
-            aula: aula.value,
-            paralelo: dparalelo.value,
-            turno: dturno.value
-        });
-
-    }
-
-    mensaje.innerHTML = "Cuenta creada correctamente";
-    mensaje.style.color = "green";
-}
-    if (error) {
-
-        mensaje.innerHTML = error.message;
-        mensaje.style.color = "red";
-        return;
-
-    }
-
-    const id = data.user.id;
-
-    /* TABLA USUARIOS */
-
-    await cliente.from("usuarios").insert({
-
-        id: id,
-        correo: correoUser,
+        correo: correo.value,
+        password: password.value,
         rol: rol.value
 
-    });
+    })
 
-    /* ESTUDIANTE */
+    .select()
 
-    if (rol.value === "estudiante") {
+    .single();
 
-        await cliente.from("estudiantes").insert({
+    if(error){
 
-            id: id,
-            nombres: nombres.value,
-            apellidos: apellidos.value,
-            ru: ru.value,
-            carrera: carrera.value,
-            semestre: semestre.value,
-            paralelo: paralelo.value,
-            turno: turno.value
+        mensaje.innerHTML="El correo ya existe";
+        mensaje.style.color="red";
+        return;
+
+    }
+
+    const id=data.id;
+
+    if(rol.value==="estudiante"){
+
+        await supabaseClient
+
+        .from("estudiantes")
+
+        .insert({
+
+            id:id,
+            nombres:nombres.value,
+            apellidos:apellidos.value,
+            ru:ru.value,
+            carrera:carrera.value,
+            semestre:semestre.value,
+            paralelo:paralelo.value,
+            turno:turno.value
+
+        });
+
+    }else{
+
+        await supabaseClient
+
+        .from("docentes")
+
+        .insert({
+
+            id:id,
+            nombres:nombres.value,
+            apellidos:apellidos.value,
+            carrera:dcarrera.value,
+            materia:materia.value,
+            aula:aula.value,
+            paralelo:dparalelo.value,
+            turno:dturno.value
 
         });
 
     }
 
-    /* DOCENTE */
-
-    else {
-
-        await cliente.from("docentes").insert({
-
-            id: id,
-            nombres: nombres.value,
-            apellidos: apellidos.value,
-            carrera: dcarrera.value,
-            materia: materia.value,
-            aula: aula.value,
-            paralelo: dparalelo.value,
-            turno: dturno.value
-
-        });
-
-    }
-
-    mensaje.innerHTML = "Cuenta creada correctamente";
-    mensaje.style.color = "green";
+    mensaje.innerHTML="Cuenta creada correctamente";
+    mensaje.style.color="green";
 
 }
 
-/* =====================================================
-   LOGIN
-===================================================== */
+/*==================================================
+  LOGIN
+==================================================*/
 
 document
 .getElementById("ingresar")
 .addEventListener("click", loginUsuario);
 
-async function loginUsuario() {
+async function loginUsuario(){
 
-    const { data, error } = await cliente
-        .from("usuarios")
-        .select("*")
-        .eq("correo", loginCorreo.value)
-        .eq("password", loginPass.value)
-        .single();
+    const { data, error } =
+    await supabaseClient
 
-    if (error) {
+    .from("usuarios")
 
-        mensaje.innerHTML = "Correo o contraseña incorrectos";
-        mensaje.style.color = "red";
+    .select("*")
+
+    .eq("correo", loginCorreo.value)
+
+    .eq("password", loginPass.value)
+
+    .single();
+
+    if(error){
+
+        mensaje.innerHTML="Correo o contraseña incorrectos";
+        mensaje.style.color="red";
         return;
 
     }
 
-    document.getElementById("inicio").style.display = "none";
-    document.getElementById("dashboard").style.display = "flex";
+    inicio.style.display="none";
+    dashboard.style.display="flex";
 
-    if (data.rol === "estudiante") {
+    if(data.rol==="estudiante"){
 
         cargarEstudiante(data.id);
 
-    } else {
+    }else{
 
         cargarDocente(data.id);
 
     }
 
 }
-/* =====================================================
-   PERFIL DEL ESTUDIANTE
-===================================================== */
 
-async function cargarEstudiante(id) {
+/*==================================================
+  PERFIL ESTUDIANTE
+==================================================*/
+
+async function cargarEstudiante(id){
 
     const { data } =
-    await cliente
+    await supabaseClient
 
-        .from("estudiantes")
-        .select("*")
-        .eq("id", id)
-        .single();
+    .from("estudiantes")
+
+    .select("*")
+
+    .eq("id",id)
+
+    .single();
 
     nombreUsuario.innerHTML =
-        data.nombres + " " + data.apellidos;
+    data.nombres + " " + data.apellidos;
 
-    rolUsuario.innerHTML =
-        "Estudiante";
+    rolUsuario.innerHTML="Estudiante";
 
-    perfil.innerHTML = `
-        <div class="cardInfo">
+    datosPerfil.innerHTML=`
 
-            <h2>Mi Perfil</h2>
+        <p><b>RU:</b> ${data.ru}</p>
+        <p><b>Carrera:</b> ${data.carrera}</p>
+        <p><b>Semestre:</b> ${data.semestre}</p>
+        <p><b>Paralelo:</b> ${data.paralelo}</p>
+        <p><b>Turno:</b> ${data.turno}</p>
 
-            <p><b>RU:</b> ${data.ru}</p>
-            <p><b>Carrera:</b> ${data.carrera}</p>
-            <p><b>Semestre:</b> ${data.semestre}</p>
-            <p><b>Paralelo:</b> ${data.paralelo}</p>
-            <p><b>Turno:</b> ${data.turno}</p>
-
-        </div>
     `;
 
 }
 
-/* =====================================================
-   PERFIL DEL DOCENTE
-===================================================== */
+/*==================================================
+  PERFIL DOCENTE
+==================================================*/
 
-async function cargarDocente(id) {
+async function cargarDocente(id){
 
     const { data } =
-    await cliente
+    await supabaseClient
 
-        .from("docentes")
-        .select("*")
-        .eq("id", id)
-        .single();
+    .from("docentes")
+
+    .select("*")
+
+    .eq("id",id)
+
+    .single();
 
     nombreUsuario.innerHTML =
-        data.nombres + " " + data.apellidos;
+    data.nombres + " " + data.apellidos;
 
-    rolUsuario.innerHTML =
-        "Docente";
+    rolUsuario.innerHTML="Docente";
 
-    perfil.innerHTML = `
-        <div class="cardInfo">
+    datosPerfil.innerHTML=`
 
-            <h2>Panel del Docente</h2>
+        <p><b>Carrera:</b> ${data.carrera}</p>
+        <p><b>Materia:</b> ${data.materia}</p>
+        <p><b>Aula:</b> ${data.aula}</p>
+        <p><b>Paralelo:</b> ${data.paralelo}</p>
+        <p><b>Turno:</b> ${data.turno}</p>
 
-            <p><b>Carrera:</b> ${data.carrera}</p>
-            <p><b>Materia:</b> ${data.materia}</p>
-            <p><b>Paralelo:</b> ${data.paralelo}</p>
-            <p><b>Aula:</b> ${data.aula}</p>
-            <p><b>Turno:</b> ${data.turno}</p>
-
-        </div>
-    `;
-
-    notas.innerHTML = `
-        <div class="cardInfo">
-
-            <h2>Registro de Notas</h2>
-
-            <p>
-                Aquí aparecerán automáticamente
-                los estudiantes de tu paralelo.
-            </p>
-
-        </div>
     `;
 
 }
 
-/* =====================================================
-   MENÚ LATERAL
-===================================================== */
+/*==================================================
+  MENÚ LATERAL
+==================================================*/
 
 const botones =
-document.querySelectorAll(".menu button[data-section]");
+document.querySelectorAll(".menu button[data-vista]");
 
-botones.forEach(btn => {
+botones.forEach(boton=>{
 
-    btn.addEventListener("click", () => {
-
-        document
-        .querySelectorAll(".section")
-        .forEach(sec => {
-
-            sec.classList.remove("activeSection");
-
-        });
+    boton.onclick=()=>{
 
         document
-        .getElementById(btn.dataset.section)
-        .classList.add("activeSection");
+        .querySelectorAll(".vista")
+        .forEach(v=>v.classList.remove("mostrar"));
 
-    });
+        document
+        .getElementById(boton.dataset.vista)
+        .classList.add("mostrar");
+
+    }
 
 });
 
-/* =====================================================
-   CERRAR SESIÓN
-===================================================== */
+/*==================================================
+  CERRAR SESIÓN
+==================================================*/
 
-cerrarSesion.onclick = async () => {
-
-    await cliente.auth.signOut();
+salir.onclick=()=>{
 
     location.reload();
 
 };
 
 </script>
+
 </body>
 </html>

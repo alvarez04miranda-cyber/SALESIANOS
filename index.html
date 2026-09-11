@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>USB Campus | Universidad Salesiana de Bolivia</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Segoe UI',sans-serif;
+        }
+
+        body{
+            background:#eef3fb;
+        }
+
+        header{
+            background:#003399;
+            color:white;
+            padding:18px;
+            text-align:center;
+            font-size:22px;
+            font-weight:bold;
+        }
+
+        .container{
+            display:flex;
+            min-height:calc(100vh - 70px);
+        }
+
+        .left{
+            flex:1;
+            background:linear-gradient(135deg,#003399,#0a56d6);
+            color:white;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+            padding:40px;
+        }
+
+        .left h1{
+            font-size:48px;
+            margin-bottom:15px;
+        }
+
+        .left p{
+            font-size:18px;
+            text-align:center;
+            line-height:30px;
+        }
+
+        .right{
+            flex:1;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            padding:30px;
+        }
+
+        .card{
+            width:100%;
+            max-width:480px;
+            background:white;
+            border-radius:18px;
+            padding:30px;
+            box-shadow:0 15px 35px rgba(0,0,0,.15);
+        }
+
+        .tabs{
+            display:flex;
+            margin-bottom:20px;
+        }
+
+        .tabs button{
+            flex:1;
+            padding:12px;
+            border:none;
+            background:#ddd;
+            cursor:pointer;
+            font-weight:bold;
+        }
+
+        .active{
+            background:#003399 !important;
+            color:white;
+        }
+
+        h2{
+            color:#003399;
+            text-align:center;
+            margin-bottom:20px;
+        }
+
+        input,select{
+            width:100%;
+            padding:12px;
+            margin-bottom:12px;
+            border-radius:8px;
+            border:1px solid #bbb;
+        }
+
+        .btn{
+            width:100%;
+            padding:13px;
+            background:#003399;
+            color:white;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+        }
+
+        .btn:hover{
+            background:#002266;
+        }
+
+        .hidden{
+            display:none;
+        }
+
+        #mensaje{
+            text-align:center;
+            margin-top:15px;
+            font-weight:bold;
+            color:green;
+        }
+
+        @media(max-width:900px){
+
+            .container{
+                flex-direction:column;
+            }
+
+            .left{
+                min-height:250px;
+            }
+
+            .left h1{
+                font-size:36px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    USB CAMPUS | Universidad Salesiana de Bolivia
+</header>
+
+<div class="container">
+
+    <section class="left">
+        <h1>USB Campus</h1>
+
+        <p>
+            Sistema Académico Universitario
+            <br><br>
+            Consulta tus notas, recibe avisos del docente,
+            crea equipos y administra tu aprendizaje.
+        </p>
+    </section>
+
+    <section class="right">
+
+        <div class="card">
+
+            <div class="tabs">
+                <button id="btnLogin" class="active">
+                    Iniciar Sesión
+                </button>
+
+                <button id="btnRegistro">
+                    Crear Cuenta
+                </button>
+            </div>
+
+            <!-- LOGIN -->
+
+            <div id="login">
+
+                <h2>Bienvenido</h2>
+
+                <input
+                    type="email"
+                    id="loginCorreo"
+                    placeholder="Correo institucional">
+
+                <input
+                    type="password"
+                    id="loginPass"
+                    placeholder="Contraseña">
+
+                <button class="btn" onclick="login()">
+                    Ingresar
+                </button>
+
+            </div>
+
+            <!-- REGISTRO -->
+
+            <div id="registro" class="hidden">
+
+                <h2>Crear Cuenta</h2>
+
+                <select id="rol">
+                    <option value="estudiante">Estudiante</option>
+                    <option value="docente">Docente</option>
+                </select>
+
+                <input id="nombres" placeholder="Nombres">
+
+                <input id="apellidos" placeholder="Apellidos">
+
+                <input id="correo" type="email" placeholder="Correo">
+
+                <input id="password" type="password" placeholder="Contraseña">
+
+                <!-- CAMPOS ESTUDIANTE -->
+
+                <div id="estudianteCampos">
+
+                    <input id="ru" placeholder="RU">
+
+                    <select id="carrera">
+                        <option>Ingeniería de Sistemas</option>
+                        <option>Contaduría</option>
+                        <option>Derecho</option>
+                    </select>
+
+                    <select id="semestre">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+
+                    <select id="paralelo">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                    </select>
+
+                    <select id="turno">
+                        <option>Mañana</option>
+                        <option>Tarde</option>
+                        <option>Noche</option>
+                    </select>
+
+                </div>
+
+                <!-- CAMPOS DOCENTE -->
+
+                <div id="docenteCampos" class="hidden">
+
+                    <select id="dcarrera">
+                        <option>Ingeniería de Sistemas</option>
+                        <option>Contaduría</option>
+                        <option>Derecho</option>
+                    </select>
+
+                    <input id="materia" placeholder="Materia">
+
+                    <input id="aula" placeholder="Aula">
+
+                    <select id="dparalelo">
+                        <option>A</option>
+                        <option>B</option>
+                        <option>C</option>
+                    </select>
+
+                    <select id="dturno">
+                        <option>Mañana</option>
+                        <option>Tarde</option>
+                        <option>Noche</option>
+                    </select>
+                </div>
+                <button class="btn" onclick="registrar()">
+                    Crear Cuenta
+                </button>
+            </div>
+            <div id="mensaje"></div>
+        </div>
+    </section>
+</div>
+<script>
+
+    /* CONEXIÓN SUPABASE */
+    const SUPABASE_URL = "TU_SUPABASE_URL";
+    const SUPABASE_KEY = "TU_SUPABASE_ANON_KEY";
+    const cliente = supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+    );
+
+    /* CAMBIAR ENTRE LOGIN Y REGISTRO */
+    const btnLogin = document.getElementById("btnLogin");
+    const btnRegistro = document.getElementById("btnRegistro");
+    btnLogin.onclick = () => {
+        login.classList.remove("hidden");
+        registro.classList.add("hidden");
+        btnLogin.classList.add("active");
+        btnRegistro.classList.remove("active");
+    };
+    btnRegistro.onclick = () => {
+        registro.classList.remove("hidden");
+        login.classList.add("hidden");
+        btnRegistro.classList.add("active");
+        btnLogin.classList.remove("active");
+    };
+    rol.onchange = () => {
+        if(rol.value === "estudiante"){
+            estudianteCampos.classList.remove("hidden");
+            docenteCampos.classList.add("hidden");
+        }else{
+            docenteCampos.classList.remove("hidden");
+            estudianteCampos.classList.add("hidden");
+        }
+    };
+
+    /* REGISTRAR */
+    async function registrar(){
+        const { data, error } = await cliente.auth.signUp({
+            email: correo.value,
+            password: password.value
+        });
+        if(error){
+            mensaje.innerHTML = error.message;
+            return;
+        }
+        const id = data.user.id;
+        await cliente.from("usuarios").insert({
+            id:id,
+            correo:correo.value,
+            rol:rol.value
+        });
+        if(rol.value === "estudiante"){
+            await cliente.from("estudiantes").insert({
+                id:id,
+                nombres:nombres.value,
+                apellidos:apellidos.value,
+                ru:ru.value,
+                carrera:carrera.value,
+                semestre:semestre.value,
+                paralelo:paralelo.value,
+                turno:turno.value
+            });
+        }else{
+            await cliente.from("docentes").insert({
+                id:id,
+                nombres:nombres.value,
+                apellidos:apellidos.value,
+                carrera:dcarrera.value,
+                materia:materia.value,
+                aula:aula.value,
+                paralelo:dparalelo.value,
+                turno:dturno.value
+            });
+        }
+        mensaje.innerHTML = "Cuenta creada correctamente";
+    }
+
+    /* LOGIN */
+    async function login(){
+        const { data, error } =
+        await cliente.auth.signInWithPassword({
+            email:loginCorreo.value,
+            password:loginPass.value
+        });
+        if(error){
+            mensaje.innerHTML = "Correo o contraseña incorrectos";
+            return;
+        }
+        const { data:usuario } = await cliente
+        .from("usuarios")
+        .select("*")
+        .eq("id", data.user.id)
+        .single();
+        if(usuario.rol === "estudiante"){
+            window.location = "estudiante.html";
+        }else{
+            window.location = "docente.html";
+        }
+    }
+</script>
+</body>
+</html>

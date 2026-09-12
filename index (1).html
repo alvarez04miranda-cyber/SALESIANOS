@@ -1,0 +1,1448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>USB Campus · Universidad Salesiana de Bolivia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* =====================================================================
+   USB CAMPUS — hoja de estilos
+   ===================================================================== */
+:root{
+  --azul:#00235A;
+  --azul-2:#03306E;
+  --azul-suave:#EAF0F8;
+  --rojo:#D7201D;
+  --rojo-2:#B31815;
+  --oro:#E3A93A;
+  --oro-suave:#FBF0DB;
+  --crema:#F7F6F1;
+  --tinta:#181B22;
+  --tinta-suave:#5B6270;
+  --borde:#E4E1D6;
+  --blanco:#FFFFFF;
+  --radio:14px;
+  --sombra: 0 2px 14px rgba(0,35,90,.08);
+  font-size:16px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',sans-serif;
+  background:var(--crema);
+  color:var(--tinta);
+  min-height:100vh;
+}
+h1,h2,h3,h4,.brand,.btn,.tab,.navlabel{font-family:'Poppins',sans-serif;}
+button{font-family:inherit;cursor:pointer;}
+a{color:inherit;}
+img{max-width:100%;display:block;}
+::selection{background:var(--oro-suave);}
+
+/* ---------- utilidades ---------- */
+.oculto{display:none !important;}
+.fila{display:flex;align-items:center;}
+.entre{justify-content:space-between;}
+.gap8{gap:8px;} .gap12{gap:12px;} .gap16{gap:16px;}
+.crecer{flex:1;}
+.texto-suave{color:var(--tinta-suave);}
+.texto-chico{font-size:.82rem;}
+.centrado{text-align:center;}
+
+.btn{
+  border:none;border-radius:10px;padding:10px 18px;font-weight:600;font-size:.92rem;
+  display:inline-flex;align-items:center;gap:8px;transition:transform .12s ease, box-shadow .12s ease;
+}
+.btn:active{transform:scale(.97);}
+.btn-primario{background:var(--rojo);color:#fff;}
+.btn-primario:hover{background:var(--rojo-2);}
+.btn-azul{background:var(--azul);color:#fff;}
+.btn-azul:hover{background:var(--azul-2);}
+.btn-fantasma{background:transparent;color:var(--azul);border:1.5px solid var(--borde);}
+.btn-fantasma:hover{border-color:var(--azul);}
+.btn-chico{padding:6px 12px;font-size:.8rem;border-radius:8px;}
+.btn-icono{background:transparent;border:none;padding:6px;border-radius:8px;color:var(--tinta-suave);}
+.btn-icono:hover{background:var(--azul-suave);color:var(--azul);}
+.btn:disabled{opacity:.55;cursor:not-allowed;}
+
+input,textarea,select{
+  font-family:inherit;border:1.5px solid var(--borde);border-radius:10px;padding:10px 12px;
+  font-size:.92rem;background:#fff;color:var(--tinta);width:100%;
+}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--oro);outline-offset:1px;border-color:var(--azul);}
+label{font-size:.8rem;font-weight:600;color:var(--tinta-suave);display:block;margin-bottom:5px;}
+.campo{margin-bottom:14px;}
+
+.tarjeta{background:#fff;border:1px solid var(--borde);border-radius:var(--radio);box-shadow:var(--sombra);}
+.avatar{border-radius:50%;object-fit:cover;background:var(--azul-suave);flex-shrink:0;}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--azul-suave);color:var(--azul);
+  padding:3px 10px;border-radius:20px;font-size:.74rem;font-weight:700;letter-spacing:.2px;}
+.chip-oro{background:var(--oro-suave);color:#8a5f10;}
+.chip-rojo{background:#FCEAEA;color:var(--rojo-2);}
+
+/* ---------- pantalla de acceso ---------- */
+#vista-acceso{
+  min-height:100vh;display:flex;align-items:stretch;
+}
+.acceso-izq{
+  flex:1.1;background:linear-gradient(160deg,var(--azul) 0%,var(--azul-2) 55%,#021a44 100%);
+  color:#fff;padding:56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden;
+}
+.acceso-izq::after{
+  content:"";position:absolute;right:-120px;bottom:-160px;width:420px;height:420px;border-radius:50%;
+  background:radial-gradient(circle,rgba(215,32,29,.35),transparent 70%);
+}
+.acceso-izq::before{
+  content:"";position:absolute;left:-90px;top:-120px;width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle,rgba(227,169,58,.25),transparent 70%);
+}
+.marca-acceso{display:flex;align-items:center;gap:12px;position:relative;z-index:1;}
+.marca-acceso .escudo{
+  width:46px;height:46px;border-radius:12px;background:var(--rojo);display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:1.05rem;letter-spacing:.5px;box-shadow:0 6px 18px rgba(215,32,29,.4);
+}
+.marca-acceso .txt{font-weight:800;font-size:1.18rem;letter-spacing:.2px;}
+.marca-acceso .txt small{display:block;font-family:'Inter';font-weight:500;font-size:.72rem;color:#c9d6ec;letter-spacing:.4px;}
+.acceso-frase{position:relative;z-index:1;max-width:440px;}
+.acceso-frase h1{font-size:2.3rem;line-height:1.18;margin:0 0 14px;font-weight:800;}
+.acceso-frase p{color:#c9d6ec;font-size:1rem;line-height:1.6;margin:0;}
+.acceso-pie{position:relative;z-index:1;color:#9fb2d6;font-size:.78rem;}
+
+.acceso-der{flex:1;display:flex;align-items:center;justify-content:center;padding:40px;background:var(--crema);}
+.panel-acceso{width:100%;max-width:420px;}
+.tabs-acceso{display:flex;background:#fff;border:1.5px solid var(--borde);border-radius:12px;padding:4px;margin-bottom:26px;}
+.tab-acceso{flex:1;text-align:center;padding:10px;border-radius:9px;font-weight:700;font-size:.88rem;color:var(--tinta-suave);}
+.tab-acceso.activo{background:var(--azul);color:#fff;}
+.selector-rol{display:flex;gap:10px;margin-bottom:16px;}
+.rol-opcion{flex:1;border:1.5px solid var(--borde);border-radius:12px;padding:14px 10px;text-align:center;font-weight:700;font-size:.85rem;color:var(--tinta-suave);}
+.rol-opcion.activo{border-color:var(--rojo);background:#FCEAEA;color:var(--rojo-2);}
+.aviso{padding:10px 12px;border-radius:10px;font-size:.84rem;margin-bottom:14px;}
+.aviso-error{background:#FCEAEA;color:var(--rojo-2);}
+.aviso-ok{background:#E9F7EE;color:#1a7a3d;}
+
+/* ---------- shell principal ---------- */
+#vista-app{display:none;min-height:100vh;}
+#vista-app.activa{display:flex;}
+.barra-lateral{
+  width:250px;flex-shrink:0;background:var(--azul);color:#fff;display:flex;flex-direction:column;
+  padding:22px 16px;position:sticky;top:0;height:100vh;
+}
+.marca{display:flex;align-items:center;gap:10px;padding:0 6px 22px;}
+.marca .escudo{width:38px;height:38px;border-radius:10px;background:var(--rojo);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.9rem;}
+.marca .txt{font-weight:800;font-size:1.02rem;}
+.marca .txt small{display:block;font-family:'Inter';font-weight:500;font-size:.66rem;color:#b9c8e6;}
+.nav{display:flex;flex-direction:column;gap:3px;margin-top:6px;}
+.nav-btn{
+  display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;background:transparent;border:none;
+  color:#cfdaf0;text-align:left;font-size:.9rem;font-weight:600;position:relative;
+}
+.nav-btn:hover{background:rgba(255,255,255,.08);color:#fff;}
+.nav-btn.activo{background:#fff;color:var(--azul);}
+.nav-btn .icono{width:20px;text-align:center;font-size:1.05rem;}
+.nav-btn .punto{
+  position:absolute;right:12px;background:var(--rojo);color:#fff;font-size:.66rem;font-weight:800;
+  border-radius:20px;padding:1px 6px;min-width:18px;text-align:center;
+}
+.nav-sep{border-top:1px solid rgba(255,255,255,.14);margin:14px 4px;}
+.tarjeta-usuario{
+  margin-top:auto;display:flex;align-items:center;gap:10px;padding:12px;background:rgba(255,255,255,.08);
+  border-radius:12px;
+}
+.tarjeta-usuario .nombre{font-size:.86rem;font-weight:700;color:#fff;}
+.tarjeta-usuario .rol{font-size:.72rem;color:#b9c8e6;}
+
+.contenido{flex:1;min-width:0;padding:26px 34px;max-width:1180px;}
+.encabezado-vista{margin-bottom:22px;}
+.encabezado-vista h2{margin:0 0 4px;font-size:1.5rem;color:var(--azul);}
+.encabezado-vista p{margin:0;color:var(--tinta-suave);font-size:.92rem;}
+
+.layout-2col{display:flex;gap:26px;align-items:flex-start;}
+.col-principal{flex:1.6;min-width:0;}
+.col-lateral{flex:1;min-width:280px;}
+
+/* ---------- feed ---------- */
+.caja-publicar{padding:18px;margin-bottom:20px;}
+.caja-publicar textarea{resize:vertical;min-height:64px;}
+.caja-publicar .fila-acciones{margin-top:10px;}
+.publicacion{padding:18px;margin-bottom:16px;}
+.publicacion .cab{margin-bottom:10px;}
+.publicacion .cab .nombre{font-weight:700;font-size:.94rem;}
+.publicacion .cab .meta{font-size:.76rem;color:var(--tinta-suave);}
+.publicacion .cuerpo{font-size:.92rem;line-height:1.55;white-space:pre-wrap;}
+.publicacion img.adjunto{margin-top:10px;border-radius:10px;max-height:420px;width:100%;object-fit:cover;}
+.publicacion .acciones{margin-top:12px;border-top:1px solid var(--borde);padding-top:10px;}
+.like-btn{background:transparent;border:none;font-size:.85rem;font-weight:700;color:var(--tinta-suave);display:flex;align-items:center;gap:6px;}
+.like-btn.activo{color:var(--rojo);}
+
+/* ---------- perfil ---------- */
+.portada{height:150px;border-radius:var(--radio) var(--radio) 0 0;background:linear-gradient(120deg,var(--azul),var(--azul-2) 60%,var(--rojo));position:relative;}
+.tarjeta-perfil{overflow:hidden;}
+.info-perfil{padding:0 22px 22px;position:relative;}
+.info-perfil .avatar-grande{width:96px;height:96px;border:4px solid #fff;margin-top:-48px;box-shadow:0 4px 14px rgba(0,0,0,.15);font-size:2rem;display:flex;align-items:center;justify-content:center;background:var(--azul);color:#fff;font-weight:800;}
+.info-perfil h3{margin:12px 0 2px;font-size:1.2rem;}
+.info-perfil .sub{color:var(--tinta-suave);font-size:.86rem;margin-bottom:12px;}
+.stats-perfil{display:flex;gap:22px;margin:14px 0;}
+.stats-perfil .stat b{display:block;font-size:1.15rem;color:var(--azul);}
+.stats-perfil .stat span{font-size:.75rem;color:var(--tinta-suave);}
+.acciones-perfil{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+/* ---------- solicitudes / listas de personas ---------- */
+.persona-fila{padding:14px 16px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.persona-fila .nombre{font-weight:700;font-size:.92rem;}
+.persona-fila .sub{font-size:.78rem;color:var(--tinta-suave);}
+
+/* ---------- chat ---------- */
+.chat-shell{display:flex;height:calc(100vh - 120px);border:1px solid var(--borde);border-radius:var(--radio);overflow:hidden;background:#fff;}
+.lista-contactos{width:280px;border-right:1px solid var(--borde);overflow-y:auto;flex-shrink:0;}
+.contacto{padding:13px 16px;display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--borde);}
+.contacto:hover{background:var(--azul-suave);}
+.contacto.activo{background:var(--azul-suave);border-left:3px solid var(--rojo);}
+.contacto .nombre{font-weight:700;font-size:.87rem;}
+.contacto .ultimo{font-size:.74rem;color:var(--tinta-suave);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px;}
+.ventana-chat{flex:1;display:flex;flex-direction:column;min-width:0;}
+.chat-cab{padding:14px 18px;border-bottom:1px solid var(--borde);display:flex;align-items:center;gap:12px;}
+.chat-mensajes{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--crema);}
+.burbuja{max-width:62%;padding:10px 14px;border-radius:14px;font-size:.87rem;line-height:1.45;}
+.burbuja.mio{align-self:flex-end;background:var(--azul);color:#fff;border-bottom-right-radius:4px;}
+.burbuja.otro{align-self:flex-start;background:#fff;border:1px solid var(--borde);border-bottom-left-radius:4px;}
+.burbuja .hora{display:block;font-size:.65rem;opacity:.7;margin-top:4px;}
+.chat-entrada{padding:14px;border-top:1px solid var(--borde);display:flex;gap:10px;}
+.avisos-rapidos{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 10px;}
+.aviso-rapido{background:var(--oro-suave);color:#8a5f10;border:none;border-radius:20px;padding:5px 12px;font-size:.72rem;font-weight:700;}
+.chat-vacio{flex:1;display:flex;align-items:center;justify-content:center;color:var(--tinta-suave);font-size:.9rem;text-align:center;padding:30px;}
+
+/* ---------- tablas / docente ---------- */
+.tabla{width:100%;border-collapse:collapse;font-size:.86rem;}
+.tabla th{text-align:left;color:var(--tinta-suave);font-weight:700;font-size:.72rem;text-transform:uppercase;letter-spacing:.3px;padding:10px 12px;border-bottom:2px solid var(--borde);}
+.tabla td{padding:10px 12px;border-bottom:1px solid var(--borde);}
+.tabla tr:last-child td{border-bottom:none;}
+.materia-tarjeta{padding:18px;margin-bottom:14px;}
+.materia-tarjeta h4{margin:0 0 4px;color:var(--azul);}
+.parciales-tabs{display:flex;gap:8px;margin-bottom:16px;}
+.ptab{padding:8px 16px;border-radius:9px;background:var(--azul-suave);color:var(--azul);font-weight:700;font-size:.84rem;border:none;}
+.ptab.activo{background:var(--azul);color:#fff;}
+.grid-rubros{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;}
+.promedio-caja{background:var(--oro-suave);border-radius:10px;padding:14px;text-align:center;margin-bottom:16px;}
+.promedio-caja b{font-size:1.6rem;color:#8a5f10;}
+.nota-final-badge{font-weight:800;font-size:1.05rem;color:var(--azul);}
+
+.vacio{padding:40px 20px;text-align:center;color:var(--tinta-suave);}
+.vacio .icono-vacio{font-size:2rem;margin-bottom:10px;}
+
+.campanas{position:relative;}
+.desplegable{position:absolute;right:0;top:calc(100% + 8px);width:340px;max-height:420px;overflow-y:auto;background:#fff;border:1px solid var(--borde);border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.14);z-index:50;}
+.notif-item{padding:12px 14px;border-bottom:1px solid var(--borde);font-size:.83rem;}
+.notif-item.no-leido{background:var(--azul-suave);}
+.notif-item b{display:block;font-size:.84rem;margin-bottom:2px;}
+
+.barra-superior-movil{display:none;}
+
+@media (max-width: 880px){
+  #vista-app.activa{flex-direction:column;}
+  .barra-lateral{width:100%;height:auto;position:relative;flex-direction:row;align-items:center;padding:12px 14px;overflow-x:auto;}
+  .marca{padding:0 10px 0 0;}
+  .nav{flex-direction:row;margin-top:0;}
+  .nav-sep{display:none;}
+  .tarjeta-usuario{display:none;}
+  .contenido{padding:18px;}
+  .layout-2col{flex-direction:column;}
+  .acceso-izq{display:none;}
+  .chat-shell{height:calc(100vh - 200px);}
+  .grid-rubros{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     VISTA: ACCESO (login / registro)
+     ===================================================================== -->
+<div id="vista-acceso">
+  <div class="acceso-izq">
+    <div class="marca-acceso">
+      <div class="escudo">USB</div>
+      <div class="txt">Campus USB<small>UNIVERSIDAD SALESIANA DE BOLIVIA</small></div>
+    </div>
+    <div class="acceso-frase">
+      <h1>Tu vida universitaria, un solo lugar.</h1>
+      <p>Comparte con tus compañeros, revisa tus notas parcial por parcial y mantente al día con tus docentes, todo en tiempo real.</p>
+    </div>
+    <div class="acceso-pie">© Universidad Salesiana de Bolivia — Sistema Académico</div>
+  </div>
+
+  <div class="acceso-der">
+    <div class="panel-acceso">
+      <div class="tabs-acceso">
+        <div class="tab-acceso activo" id="tab-ingresar" onclick="cambiarTabAcceso('ingresar')">Iniciar sesión</div>
+        <div class="tab-acceso" id="tab-registrar" onclick="cambiarTabAcceso('registrar')">Crear cuenta</div>
+      </div>
+
+      <div id="aviso-acceso"></div>
+
+      <!-- INGRESAR -->
+      <form id="form-ingresar" onsubmit="return accionIngresar(event)">
+        <div class="campo">
+          <label>Correo institucional o personal</label>
+          <input type="email" id="in-correo" required placeholder="tu@correo.com">
+        </div>
+        <div class="campo">
+          <label>Contraseña</label>
+          <input type="password" id="in-clave" required placeholder="••••••••">
+        </div>
+        <button class="btn btn-primario" style="width:100%;justify-content:center" type="submit">Ingresar al campus</button>
+      </form>
+
+      <!-- REGISTRAR -->
+      <form id="form-registrar" class="oculto" onsubmit="return accionRegistrar(event)">
+        <div class="selector-rol">
+          <div class="rol-opcion activo" data-rol="estudiante" onclick="elegirRol('estudiante')">🎓 Soy estudiante</div>
+          <div class="rol-opcion" data-rol="docente" onclick="elegirRol('docente')">🧑‍🏫 Soy docente</div>
+        </div>
+        <div class="campo" style="display:flex;gap:10px;">
+          <div style="flex:1"><label>Nombres</label><input id="r-nombres" required></div>
+          <div style="flex:1"><label>Apellidos</label><input id="r-apellidos" required></div>
+        </div>
+        <div class="campo">
+          <label>Correo</label>
+          <input type="email" id="r-correo" required placeholder="tu@correo.com">
+        </div>
+        <div class="campo" id="campo-carrera">
+          <label>Carrera</label>
+          <input id="r-carrera" placeholder="Ej. Ingeniería de Sistemas">
+        </div>
+        <div class="campo oculto" id="campo-registro">
+          <label>N° de registro</label>
+          <input id="r-registro" placeholder="Ej. 2023-1234">
+        </div>
+        <div class="campo oculto" id="campo-titulo">
+          <label>Título / grado académico</label>
+          <input id="r-titulo" placeholder="Ej. Ing., Lic., Mgr.">
+        </div>
+        <div class="campo">
+          <label>Contraseña</label>
+          <input type="password" id="r-clave" required placeholder="Mínimo 6 caracteres">
+        </div>
+        <button class="btn btn-primario" style="width:100%;justify-content:center" type="submit">Crear mi cuenta</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- =====================================================================
+     VISTA: APP (después de iniciar sesión)
+     ===================================================================== -->
+<div id="vista-app">
+  <aside class="barra-lateral">
+    <div class="marca">
+      <div class="escudo">USB</div>
+      <div class="txt">Campus USB<small id="etq-rol-barra">ESTUDIANTE</small></div>
+    </div>
+
+    <nav class="nav" id="nav-estudiante">
+      <button class="nav-btn" data-vista="feed" onclick="irVista('feed')"><span class="icono">🏠</span>Inicio</button>
+      <button class="nav-btn" data-vista="perfil" onclick="irVista('perfil')"><span class="icono">👤</span>Mi perfil</button>
+      <button class="nav-btn" data-vista="solicitudes" onclick="irVista('solicitudes')"><span class="icono">🤝</span>Solicitudes<span class="punto oculto" id="punto-solicitudes"></span></button>
+      <button class="nav-btn" data-vista="chat" onclick="irVista('chat')"><span class="icono">💬</span>Mensajes<span class="punto oculto" id="punto-chat"></span></button>
+      <button class="nav-btn" data-vista="materias-est" onclick="irVista('materias-est')"><span class="icono">📚</span>Mis materias y notas</button>
+    </nav>
+
+    <nav class="nav oculto" id="nav-docente">
+      <button class="nav-btn" data-vista="feed" onclick="irVista('feed')"><span class="icono">🏠</span>Inicio</button>
+      <button class="nav-btn" data-vista="perfil" onclick="irVista('perfil')"><span class="icono">👤</span>Mi perfil</button>
+      <button class="nav-btn" data-vista="solicitudes" onclick="irVista('solicitudes')"><span class="icono">🤝</span>Solicitudes<span class="punto oculto" id="punto-solicitudes-d"></span></button>
+      <button class="nav-btn" data-vista="chat" onclick="irVista('chat')"><span class="icono">💬</span>Mensajes<span class="punto oculto" id="punto-chat-d"></span></button>
+      <div class="nav-sep"></div>
+      <button class="nav-btn" data-vista="materias-doc" onclick="irVista('materias-doc')"><span class="icono">📖</span>Mis materias</button>
+      <button class="nav-btn" data-vista="calificar" onclick="irVista('calificar')"><span class="icono">📝</span>Calificar</button>
+      <button class="nav-btn" data-vista="asistencia" onclick="irVista('asistencia')"><span class="icono">🗓️</span>Asistencia</button>
+    </nav>
+
+    <div class="tarjeta-usuario">
+      <div class="avatar" id="mini-avatar" style="width:36px;height:36px;background:var(--rojo);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.8rem;">--</div>
+      <div style="min-width:0;flex:1">
+        <div class="nombre" id="mini-nombre" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Cargando…</div>
+        <div class="rol" id="mini-rol">—</div>
+      </div>
+      <button class="btn-icono" title="Cerrar sesión" onclick="cerrarSesion()">⏻</button>
+    </div>
+  </aside>
+
+  <main class="contenido">
+    <div class="fila entre" style="margin-bottom:6px;">
+      <div></div>
+      <div class="campanas">
+        <button class="btn-icono" style="font-size:1.2rem;position:relative" onclick="toggleNotificaciones()">
+          🔔<span class="punto oculto" id="punto-notif" style="position:absolute;top:-2px;right:-2px;">0</span>
+        </button>
+        <div class="desplegable oculto" id="lista-notificaciones"></div>
+      </div>
+    </div>
+
+    <!-- ---------- FEED ---------- -->
+    <section id="v-feed" class="vista-seccion">
+      <div class="encabezado-vista">
+        <h2>Muro USB</h2>
+        <p>Comparte novedades, apuntes o avisos con toda la comunidad universitaria.</p>
+      </div>
+      <div class="layout-2col">
+        <div class="col-principal">
+          <div class="tarjeta caja-publicar">
+            <textarea id="txt-publicar" placeholder="¿Qué quieres compartir con la comunidad USB?"></textarea>
+            <div class="campo" style="margin-top:8px;">
+              <input type="file" id="img-publicar" accept="image/*">
+            </div>
+            <div class="fila entre fila-acciones">
+              <span class="texto-suave texto-chico">Se publicará con tu nombre y perfil</span>
+              <button class="btn btn-primario btn-chico" onclick="crearPublicacion()">Publicar</button>
+            </div>
+          </div>
+          <div id="lista-publicaciones"></div>
+        </div>
+        <div class="col-lateral">
+          <div class="tarjeta" style="padding:18px;">
+            <h4 style="margin:0 0 10px;color:var(--azul);font-size:.95rem;">Sobre USB Campus</h4>
+            <p class="texto-suave texto-chico" style="line-height:1.6;">Este es el espacio social y académico de la Universidad Salesiana de Bolivia: conecta con compañeros, sigue tus calificaciones al día y recibe avisos de tus docentes al instante.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- PERFIL ---------- -->
+    <section id="v-perfil" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2 id="perfil-titulo">Perfil</h2>
+        <p id="perfil-subtitulo">Información del usuario</p>
+      </div>
+      <div class="tarjeta tarjeta-perfil" style="max-width:640px;">
+        <div class="portada"></div>
+        <div class="info-perfil">
+          <div class="avatar avatar-grande" id="perfil-avatar">--</div>
+          <h3 id="perfil-nombre">—</h3>
+          <div class="sub" id="perfil-datos">—</div>
+          <div id="perfil-chips" class="fila gap8" style="flex-wrap:wrap;"></div>
+          <div class="stats-perfil">
+            <div class="stat"><b id="perfil-estrellas">0</b><span>Estrellas</span></div>
+            <div class="stat"><b id="perfil-amigos">0</b><span>Contactos</span></div>
+          </div>
+          <div class="acciones-perfil" id="perfil-acciones"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- SOLICITUDES ---------- -->
+    <section id="v-solicitudes" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Solicitudes de contacto</h2>
+        <p>Conecta con tus compañeros de universidad.</p>
+      </div>
+      <div class="layout-2col">
+        <div class="col-principal">
+          <h4 class="texto-suave" style="margin-bottom:10px;">Recibidas</h4>
+          <div id="lista-solicitudes-recibidas"></div>
+          <h4 class="texto-suave" style="margin:22px 0 10px;">Enviadas</h4>
+          <div id="lista-solicitudes-enviadas"></div>
+        </div>
+        <div class="col-lateral">
+          <div class="tarjeta" style="padding:18px;">
+            <h4 style="margin:0 0 10px;color:var(--azul);font-size:.95rem;">Buscar personas</h4>
+            <input id="buscar-persona" placeholder="Busca por nombre..." oninput="buscarPersonas()">
+            <div id="resultado-busqueda" style="margin-top:10px;"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- CHAT ---------- -->
+    <section id="v-chat" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Mensajes</h2>
+        <p>Chatea con tus contactos y docentes en tiempo real.</p>
+      </div>
+      <div class="chat-shell">
+        <div class="lista-contactos" id="lista-contactos"></div>
+        <div class="ventana-chat" id="ventana-chat">
+          <div class="chat-vacio">Selecciona una conversación para comenzar a chatear.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- ESTUDIANTE: MATERIAS Y NOTAS ---------- -->
+    <section id="v-materias-est" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Mis materias y notas</h2>
+        <p>Revisa tus calificaciones por parcial y tu promedio final.</p>
+      </div>
+      <div class="tarjeta" style="padding:18px;margin-bottom:20px;">
+        <h4 style="margin:0 0 10px;color:var(--azul);font-size:.95rem;">Inscribirme a una materia</h4>
+        <div class="fila gap8">
+          <input id="buscar-materia" placeholder="Busca una materia por nombre..." oninput="buscarMateriasDisponibles()">
+        </div>
+        <div id="resultado-materias" style="margin-top:10px;"></div>
+      </div>
+      <div id="lista-mis-materias"></div>
+    </section>
+
+    <!-- ---------- DOCENTE: MIS MATERIAS ---------- -->
+    <section id="v-materias-doc" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Mis materias</h2>
+        <p>Crea las materias que impartes este semestre.</p>
+      </div>
+      <div class="tarjeta" style="padding:18px;margin-bottom:20px;max-width:560px;">
+        <h4 style="margin:0 0 12px;color:var(--azul);font-size:.95rem;">Nueva materia</h4>
+        <div class="campo"><label>Nombre de la materia</label><input id="nm-nombre" placeholder="Ej. Bases de Datos II"></div>
+        <div class="fila gap8">
+          <div class="campo crecer"><label>Turno</label>
+            <select id="nm-turno"><option>Mañana</option><option>Tarde</option><option>Noche</option></select>
+          </div>
+          <div class="campo crecer"><label>Paralelo</label><input id="nm-paralelo" placeholder="A"></div>
+          <div class="campo crecer"><label>Gestión</label><input id="nm-gestion" placeholder="II/2026"></div>
+        </div>
+        <button class="btn btn-primario" onclick="crearMateria()">Crear materia</button>
+      </div>
+      <div id="lista-materias-docente"></div>
+    </section>
+
+    <!-- ---------- DOCENTE: CALIFICAR ---------- -->
+    <section id="v-calificar" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Calificar estudiantes</h2>
+        <p>Selecciona una materia y un estudiante para registrar sus notas.</p>
+      </div>
+      <div class="campo" style="max-width:420px;">
+        <label>Materia</label>
+        <select id="sel-materia-calificar" onchange="alSeleccionarMateriaCalificar()"></select>
+      </div>
+      <div id="panel-calificar"></div>
+    </section>
+
+    <!-- ---------- DOCENTE: ASISTENCIA ---------- -->
+    <section id="v-asistencia" class="vista-seccion oculto">
+      <div class="encabezado-vista">
+        <h2>Asistencia y participación</h2>
+        <p>Registra la asistencia diaria de tus estudiantes.</p>
+      </div>
+      <div class="fila gap12" style="margin-bottom:16px;flex-wrap:wrap;">
+        <div class="campo" style="max-width:340px;flex:1;">
+          <label>Materia</label>
+          <select id="sel-materia-asistencia" onchange="cargarAsistencia()"></select>
+        </div>
+        <div class="campo" style="max-width:200px;">
+          <label>Fecha</label>
+          <input type="date" id="fecha-asistencia" onchange="cargarAsistencia()">
+        </div>
+      </div>
+      <div id="panel-asistencia"></div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* =====================================================================
+   CONFIGURACIÓN DE SUPABASE — ¡¡ CONFIGURA AQUÍ !!
+   Reemplaza los dos valores de abajo con los de tu proyecto Supabase:
+   Project Settings -> API -> Project URL / anon public key
+   ===================================================================== */
+const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+const SUPABASE_ANON_KEY = "TU-ANON-KEY-AQUI";
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+/* =====================================================================
+   ESTADO GLOBAL
+   ===================================================================== */
+const estado = {
+  sesion: null,
+  perfil: null,
+  rolRegistro: 'estudiante',
+  vistaActual: 'feed',
+  contactos: [],
+  chatActivo: null,
+  canalMensajes: null,
+  materiasCache: [],
+  perfilesCache: {}, // id -> perfil (cache local)
+};
+
+const RUBROS = [
+  {clave:'asistencia', etiqueta:'Asistencia'},
+  {clave:'tareas', etiqueta:'Tareas'},
+  {clave:'practicas', etiqueta:'Prácticas'},
+  {clave:'participacion', etiqueta:'Participación'},
+  {clave:'proyecto', etiqueta:'Proyecto'},
+  {clave:'examen', etiqueta:'Examen'},
+];
+
+const AVISOS_RAPIDOS = [
+  "Te falta entregar la tarea, tienes plazo de 2 días.",
+  "Recuerda subir tu práctica antes del viernes.",
+  "Tu proyecto aún no fue entregado.",
+  "Buen trabajo esta semana, sigue así.",
+  "Por favor pásate por horas de consulta.",
+];
+
+/* =====================================================================
+   UTILIDADES
+   ===================================================================== */
+function iniciales(nombres, apellidos){
+  return ((nombres?.[0]||'')+(apellidos?.[0]||'')).toUpperCase() || '--';
+}
+function fmtHora(iso){
+  const d = new Date(iso);
+  return d.toLocaleTimeString('es-BO',{hour:'2-digit',minute:'2-digit'});
+}
+function fmtFecha(iso){
+  const d = new Date(iso);
+  return d.toLocaleDateString('es-BO',{day:'2-digit',month:'short',year:'numeric'});
+}
+function escapeHtml(str){
+  const div = document.createElement('div');
+  div.innerText = str ?? '';
+  return div.innerHTML;
+}
+function promedioRubros(n){
+  const suma = RUBROS.reduce((acc,r)=> acc + (Number(n[r.clave])||0), 0);
+  return +(suma / RUBROS.length).toFixed(2);
+}
+async function subirArchivo(inputEl, carpeta){
+  const file = inputEl.files?.[0];
+  if(!file) return null;
+  const ruta = `${carpeta}/${estado.sesion.user.id}-${Date.now()}-${file.name}`;
+  const {data, error} = await sb.storage.from('contenido').upload(ruta, file);
+  if(error){ alert('No se pudo subir el archivo: '+error.message); return null; }
+  const {data:pub} = sb.storage.from('contenido').getPublicUrl(data.path);
+  return pub.publicUrl;
+}
+async function obtenerPerfil(id){
+  if(estado.perfilesCache[id]) return estado.perfilesCache[id];
+  const {data} = await sb.from('perfiles').select('*').eq('id', id).maybeSingle();
+  if(data) estado.perfilesCache[id] = data;
+  return data;
+}
+
+/* =====================================================================
+   ACCESO: tabs, selector de rol
+   ===================================================================== */
+function cambiarTabAcceso(tab){
+  document.getElementById('tab-ingresar').classList.toggle('activo', tab==='ingresar');
+  document.getElementById('tab-registrar').classList.toggle('activo', tab==='registrar');
+  document.getElementById('form-ingresar').classList.toggle('oculto', tab!=='ingresar');
+  document.getElementById('form-registrar').classList.toggle('oculto', tab!=='registrar');
+  document.getElementById('aviso-acceso').innerHTML = '';
+}
+function elegirRol(rol){
+  estado.rolRegistro = rol;
+  document.querySelectorAll('.rol-opcion').forEach(el=>el.classList.toggle('activo', el.dataset.rol===rol));
+  document.getElementById('campo-carrera').classList.toggle('oculto', rol!=='estudiante');
+  document.getElementById('campo-registro').classList.toggle('oculto', rol!=='estudiante');
+  document.getElementById('campo-titulo').classList.toggle('oculto', rol!=='docente');
+}
+function mostrarAvisoAcceso(msg, tipo){
+  document.getElementById('aviso-acceso').innerHTML =
+    `<div class="aviso ${tipo==='ok'?'aviso-ok':'aviso-error'}">${escapeHtml(msg)}</div>`;
+}
+
+async function accionIngresar(ev){
+  ev.preventDefault();
+  const correo = document.getElementById('in-correo').value.trim();
+  const clave = document.getElementById('in-clave').value;
+  const {error} = await sb.auth.signInWithPassword({email: correo, password: clave});
+  if(error){ mostrarAvisoAcceso(error.message, 'error'); return false; }
+  return false;
+}
+
+async function accionRegistrar(ev){
+  ev.preventDefault();
+  const correo = document.getElementById('r-correo').value.trim();
+  const clave = document.getElementById('r-clave').value;
+  const nombres = document.getElementById('r-nombres').value.trim();
+  const apellidos = document.getElementById('r-apellidos').value.trim();
+  const rol = estado.rolRegistro;
+
+  const {data, error} = await sb.auth.signUp({email: correo, password: clave});
+  if(error){ mostrarAvisoAcceso(error.message,'error'); return false; }
+
+  const userId = data.user?.id;
+  if(!userId){
+    mostrarAvisoAcceso('Revisa tu correo para confirmar la cuenta y luego inicia sesión.', 'ok');
+    return false;
+  }
+
+  const nuevoPerfil = {
+    id: userId, rol, nombres, apellidos, correo,
+    carrera: rol==='estudiante' ? document.getElementById('r-carrera').value.trim() : null,
+    registro: rol==='estudiante' ? document.getElementById('r-registro').value.trim() : null,
+    titulo: rol==='docente' ? document.getElementById('r-titulo').value.trim() : null,
+  };
+  const {error: e2} = await sb.from('perfiles').insert(nuevoPerfil);
+  if(e2){ mostrarAvisoAcceso('Cuenta creada, pero hubo un problema con el perfil: '+e2.message, 'error'); return false; }
+
+  mostrarAvisoAcceso('¡Cuenta creada con éxito! Iniciando sesión...', 'ok');
+  setTimeout(()=> location.reload(), 900);
+  return false;
+}
+
+async function cerrarSesion(){
+  await sb.auth.signOut();
+  location.reload();
+}
+
+/* =====================================================================
+   ARRANQUE DE LA APP
+   ===================================================================== */
+async function iniciar(){
+  const {data:{session}} = await sb.auth.getSession();
+  if(!session){
+    document.getElementById('vista-acceso').style.display='flex';
+    document.getElementById('vista-app').classList.remove('activa');
+    return;
+  }
+  estado.sesion = session;
+  const perfil = await obtenerPerfil(session.user.id);
+  if(!perfil){
+    // sesión de auth existe pero no hay fila de perfil (caso raro) -> cerrar sesión
+    await sb.auth.signOut();
+    location.reload();
+    return;
+  }
+  estado.perfil = perfil;
+  document.getElementById('vista-acceso').style.display='none';
+  document.getElementById('vista-app').classList.add('activa');
+  montarShellSegunRol();
+  await Promise.all([cargarPublicaciones(), cargarSolicitudes(true), cargarNotificaciones(true)]);
+  suscribirRealtimeGlobal();
+  irVista('feed');
+}
+
+function montarShellSegunRol(){
+  const p = estado.perfil;
+  document.getElementById('mini-nombre').innerText = `${p.nombres} ${p.apellidos}`;
+  document.getElementById('mini-avatar').innerText = iniciales(p.nombres,p.apellidos);
+  document.getElementById('mini-rol').innerText = p.rol === 'docente' ? 'Docente' : 'Estudiante';
+  document.getElementById('etq-rol-barra').innerText = p.rol==='docente' ? 'PANEL DOCENTE' : 'PANEL ESTUDIANTE';
+  document.getElementById('nav-estudiante').classList.toggle('oculto', p.rol!=='estudiante');
+  document.getElementById('nav-docente').classList.toggle('oculto', p.rol!=='docente');
+}
+
+/* =====================================================================
+   NAVEGACIÓN ENTRE VISTAS
+   ===================================================================== */
+function irVista(nombre){
+  estado.vistaActual = nombre;
+  document.querySelectorAll('.vista-seccion').forEach(s=>s.classList.add('oculto'));
+  document.getElementById('v-'+nombre)?.classList.remove('oculto');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('activo', b.dataset.vista===nombre));
+
+  if(nombre==='perfil') verPerfil(estado.perfil.id);
+  if(nombre==='solicitudes') cargarSolicitudes();
+  if(nombre==='chat') cargarContactos();
+  if(nombre==='materias-est') cargarMateriasEstudiante();
+  if(nombre==='materias-doc') cargarMateriasDocente();
+  if(nombre==='calificar') prepararVistaCalificar();
+  if(nombre==='asistencia') prepararVistaAsistencia();
+}
+
+/* =====================================================================
+   FEED (publicaciones tipo Facebook)
+   ===================================================================== */
+async function crearPublicacion(){
+  const texto = document.getElementById('txt-publicar').value.trim();
+  const inputImg = document.getElementById('img-publicar');
+  if(!texto && !inputImg.files?.[0]){ return; }
+  let imagenUrl = null;
+  if(inputImg.files?.[0]) imagenUrl = await subirArchivo(inputImg, 'publicaciones');
+  const {error} = await sb.from('publicaciones').insert({
+    autor_id: estado.perfil.id, contenido: texto, imagen_url: imagenUrl
+  });
+  if(error){ alert('No se pudo publicar: '+error.message); return; }
+  document.getElementById('txt-publicar').value='';
+  inputImg.value='';
+  await cargarPublicaciones();
+}
+
+async function cargarPublicaciones(){
+  const {data:posts, error} = await sb.from('publicaciones').select('*').order('creado_en',{ascending:false}).limit(50);
+  if(error) return;
+  const {data:likes} = await sb.from('likes_publicacion').select('*');
+  const cont = document.getElementById('lista-publicaciones');
+  if(!posts?.length){
+    cont.innerHTML = `<div class="tarjeta vacio"><div class="icono-vacio">🗒️</div>Todavía no hay publicaciones. ¡Sé el primero en compartir algo!</div>`;
+    return;
+  }
+  // asegurar perfiles de autores en caché
+  const idsFaltantes = [...new Set(posts.map(p=>p.autor_id))].filter(id=>!estado.perfilesCache[id]);
+  if(idsFaltantes.length){
+    const {data:pf} = await sb.from('perfiles').select('*').in('id', idsFaltantes);
+    pf?.forEach(p=> estado.perfilesCache[p.id]=p);
+  }
+  cont.innerHTML = posts.map(post=>{
+    const autor = estado.perfilesCache[post.autor_id] || {nombres:'Usuario', apellidos:''};
+    const misLikes = (likes||[]).filter(l=>l.publicacion_id===post.id);
+    const yaLike = misLikes.some(l=>l.usuario_id===estado.perfil.id);
+    return `
+    <div class="tarjeta publicacion">
+      <div class="fila gap12 cab">
+        <div class="avatar" style="width:42px;height:42px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer;" onclick="verPerfil('${post.autor_id}');irVista('perfil')">${iniciales(autor.nombres,autor.apellidos)}</div>
+        <div>
+          <div class="nombre" style="cursor:pointer" onclick="verPerfil('${post.autor_id}');irVista('perfil')">${escapeHtml(autor.nombres)} ${escapeHtml(autor.apellidos)} ${autor.rol==='docente'?'<span class=\"chip chip-rojo\">Docente</span>':''}</div>
+          <div class="meta">${fmtFecha(post.creado_en)} · ${fmtHora(post.creado_en)}</div>
+        </div>
+      </div>
+      ${post.contenido ? `<div class="cuerpo">${escapeHtml(post.contenido)}</div>` : ''}
+      ${post.imagen_url ? `<img class="adjunto" src="${post.imagen_url}">` : ''}
+      <div class="acciones">
+        <button class="like-btn ${yaLike?'activo':''}" onclick="alternarLike('${post.id}', ${yaLike})">
+          ${yaLike?'❤️':'🤍'} Me gusta ${misLikes.length ? `· ${misLikes.length}` : ''}
+        </button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function alternarLike(postId, yaLike){
+  if(yaLike){
+    await sb.from('likes_publicacion').delete().eq('publicacion_id',postId).eq('usuario_id',estado.perfil.id);
+  } else {
+    await sb.from('likes_publicacion').insert({publicacion_id:postId, usuario_id:estado.perfil.id});
+  }
+  await cargarPublicaciones();
+}
+
+/* =====================================================================
+   PERFIL (propio o de otro usuario)
+   ===================================================================== */
+async function verPerfil(userId){
+  const p = await obtenerPerfil(userId);
+  if(!p) return;
+  const esPropio = userId === estado.perfil.id;
+
+  document.getElementById('perfil-titulo').innerText = esPropio ? 'Mi perfil' : `Perfil de ${p.nombres}`;
+  document.getElementById('perfil-subtitulo').innerText = esPropio ? 'Así te ven los demás en USB Campus' : 'Información pública del usuario';
+  document.getElementById('perfil-avatar').innerText = iniciales(p.nombres,p.apellidos);
+  document.getElementById('perfil-nombre').innerText = `${p.nombres} ${p.apellidos}`;
+  document.getElementById('perfil-datos').innerText = p.rol==='docente'
+    ? `${p.titulo||'Docente'} · Universidad Salesiana de Bolivia`
+    : `${p.carrera||'Estudiante'} · Universidad Salesiana de Bolivia`;
+
+  document.getElementById('perfil-chips').innerHTML = `
+    <span class="chip ${p.rol==='docente'?'chip-rojo':''}">${p.rol==='docente'?'Docente':'Estudiante'}</span>
+    ${p.registro ? `<span class="chip chip-oro">Reg. ${escapeHtml(p.registro)}</span>` : ''}
+  `;
+  document.getElementById('perfil-estrellas').innerText = p.estrellas || 0;
+
+  const {count} = await sb.from('solicitudes_amistad').select('*',{count:'exact',head:true}).eq('estado','aceptada').or(`de_id.eq.${userId},para_id.eq.${userId}`);
+  document.getElementById('perfil-amigos').innerText = count || 0;
+
+  const acciones = document.getElementById('perfil-acciones');
+  if(esPropio){
+    acciones.innerHTML = `<button class="btn btn-fantasma btn-chico" onclick="editarBioPrompt()">✏️ Editar biografía</button>`;
+  } else {
+    const {data:solEnv} = await sb.from('solicitudes_amistad').select('*').eq('de_id',estado.perfil.id).eq('para_id',userId).maybeSingle();
+    const {data:solRec} = await sb.from('solicitudes_amistad').select('*').eq('de_id',userId).eq('para_id',estado.perfil.id).maybeSingle();
+    const {data:miEstrella} = await sb.from('estrellas_perfil').select('*').eq('perfil_id',userId).eq('otorgado_por',estado.perfil.id).maybeSingle();
+
+    let botonSolicitud = '';
+    if(solEnv?.estado === 'aceptada' || solRec?.estado==='aceptada'){
+      botonSolicitud = `<span class="chip">🤝 Ya son contactos</span>`;
+    } else if(solEnv){
+      botonSolicitud = `<button class="btn btn-fantasma btn-chico" disabled>Solicitud enviada</button>`;
+    } else if(solRec){
+      botonSolicitud = `<button class="btn btn-primario btn-chico" onclick="responderSolicitud('${solRec.id}','aceptada')">Aceptar solicitud</button>`;
+    } else {
+      botonSolicitud = `<button class="btn btn-azul btn-chico" onclick="enviarSolicitud('${userId}')">➕ Enviar solicitud</button>`;
+    }
+
+    acciones.innerHTML = `
+      ${botonSolicitud}
+      <button class="btn btn-fantasma btn-chico" onclick="darEstrella('${userId}', ${!!miEstrella})">${miEstrella?'⭐ Quitar estrella':'☆ Dar estrella'}</button>
+      <button class="btn btn-fantasma btn-chico" onclick="irVista('chat');setTimeout(()=>abrirChatCon('${userId}'),150)">💬 Enviar mensaje</button>
+    `;
+  }
+}
+
+async function editarBioPrompt(){
+  const nueva = prompt('Escribe tu nueva biografía:', estado.perfil.bio || '');
+  if(nueva === null) return;
+  await sb.from('perfiles').update({bio:nueva}).eq('id', estado.perfil.id);
+  estado.perfil.bio = nueva;
+  estado.perfilesCache[estado.perfil.id] = estado.perfil;
+  verPerfil(estado.perfil.id);
+}
+
+async function enviarSolicitud(paraId){
+  const {error} = await sb.from('solicitudes_amistad').insert({de_id:estado.perfil.id, para_id:paraId});
+  if(error){ alert(error.message); return; }
+  verPerfil(paraId);
+}
+async function responderSolicitud(id, estadoNuevo){
+  await sb.from('solicitudes_amistad').update({estado:estadoNuevo}).eq('id', id);
+  cargarSolicitudes();
+}
+async function darEstrella(perfilId, yaTiene){
+  if(yaTiene){
+    await sb.from('estrellas_perfil').delete().eq('perfil_id',perfilId).eq('otorgado_por',estado.perfil.id);
+  } else {
+    await sb.from('estrellas_perfil').insert({perfil_id:perfilId, otorgado_por:estado.perfil.id});
+  }
+  delete estado.perfilesCache[perfilId];
+  verPerfil(perfilId);
+}
+
+/* =====================================================================
+   SOLICITUDES / BÚSQUEDA DE PERSONAS
+   ===================================================================== */
+async function cargarSolicitudes(soloContador){
+  const {data:recibidas} = await sb.from('solicitudes_amistad').select('*').eq('para_id',estado.perfil.id).eq('estado','pendiente');
+  const pendientes = recibidas?.length || 0;
+  ['punto-solicitudes','punto-solicitudes-d'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.innerText = pendientes; el.classList.toggle('oculto', pendientes===0); }
+  });
+  if(soloContador) return;
+
+  const idsFaltantes = [...new Set((recibidas||[]).map(s=>s.de_id))].filter(id=>!estado.perfilesCache[id]);
+  if(idsFaltantes.length){
+    const {data:pf} = await sb.from('perfiles').select('*').in('id', idsFaltantes);
+    pf?.forEach(p=> estado.perfilesCache[p.id]=p);
+  }
+  const contRec = document.getElementById('lista-solicitudes-recibidas');
+  contRec.innerHTML = recibidas?.length ? recibidas.map(s=>{
+    const p = estado.perfilesCache[s.de_id] || {};
+    return `<div class="tarjeta persona-fila">
+      <div class="avatar" style="width:40px;height:40px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">${iniciales(p.nombres,p.apellidos)}</div>
+      <div class="crecer">
+        <div class="nombre">${escapeHtml(p.nombres||'')} ${escapeHtml(p.apellidos||'')}</div>
+        <div class="sub">${p.rol==='docente'?'Docente':(p.carrera||'Estudiante')}</div>
+      </div>
+      <button class="btn btn-primario btn-chico" onclick="responderSolicitud('${s.id}','aceptada')">Aceptar</button>
+      <button class="btn btn-fantasma btn-chico" onclick="responderSolicitud('${s.id}','rechazada')">Rechazar</button>
+    </div>`;
+  }).join('') : `<div class="tarjeta vacio">No tienes solicitudes pendientes.</div>`;
+
+  const {data:enviadas} = await sb.from('solicitudes_amistad').select('*').eq('de_id',estado.perfil.id);
+  const idsF2 = [...new Set((enviadas||[]).map(s=>s.para_id))].filter(id=>!estado.perfilesCache[id]);
+  if(idsF2.length){
+    const {data:pf2} = await sb.from('perfiles').select('*').in('id', idsF2);
+    pf2?.forEach(p=> estado.perfilesCache[p.id]=p);
+  }
+  const contEnv = document.getElementById('lista-solicitudes-enviadas');
+  contEnv.innerHTML = enviadas?.length ? enviadas.map(s=>{
+    const p = estado.perfilesCache[s.para_id] || {};
+    const estadoTxt = {pendiente:'Pendiente', aceptada:'Aceptada ✅', rechazada:'Rechazada'}[s.estado];
+    return `<div class="tarjeta persona-fila">
+      <div class="avatar" style="width:40px;height:40px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;">${iniciales(p.nombres,p.apellidos)}</div>
+      <div class="crecer">
+        <div class="nombre">${escapeHtml(p.nombres||'')} ${escapeHtml(p.apellidos||'')}</div>
+        <div class="sub">${estadoTxt}</div>
+      </div>
+    </div>`;
+  }).join('') : `<div class="tarjeta vacio">No enviaste solicitudes todavía.</div>`;
+}
+
+let temporizadorBusqueda=null;
+function buscarPersonas(){
+  clearTimeout(temporizadorBusqueda);
+  temporizadorBusqueda = setTimeout(async ()=>{
+    const q = document.getElementById('buscar-persona').value.trim();
+    const cont = document.getElementById('resultado-busqueda');
+    if(!q){ cont.innerHTML=''; return; }
+    const {data} = await sb.from('perfiles').select('*').neq('id',estado.perfil.id)
+      .or(`nombres.ilike.%${q}%,apellidos.ilike.%${q}%`).limit(10);
+    cont.innerHTML = data?.length ? data.map(p=>`
+      <div class="persona-fila" style="border:1px solid var(--borde);border-radius:10px;">
+        <div class="avatar" style="width:34px;height:34px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;">${iniciales(p.nombres,p.apellidos)}</div>
+        <div class="crecer">
+          <div class="nombre texto-chico">${escapeHtml(p.nombres)} ${escapeHtml(p.apellidos)}</div>
+        </div>
+        <button class="btn btn-fantasma btn-chico" onclick="verPerfil('${p.id}');irVista('perfil')">Ver perfil</button>
+      </div>`).join('') : `<div class="texto-suave texto-chico">Sin resultados.</div>`;
+  }, 300);
+}
+
+/* =====================================================================
+   CHAT EN TIEMPO REAL
+   ===================================================================== */
+async function cargarContactos(){
+  // contactos = solicitudes aceptadas + (si es estudiante) docentes de sus materias + (si es docente) sus estudiantes
+  const {data:aceptadas} = await sb.from('solicitudes_amistad').select('*').eq('estado','aceptada').or(`de_id.eq.${estado.perfil.id},para_id.eq.${estado.perfil.id}`);
+  const idsContactos = new Set((aceptadas||[]).map(s=> s.de_id===estado.perfil.id ? s.para_id : s.de_id));
+
+  if(estado.perfil.rol==='estudiante'){
+    const {data:insc} = await sb.from('inscripciones').select('materia_id').eq('estudiante_id',estado.perfil.id);
+    const materiaIds = (insc||[]).map(i=>i.materia_id);
+    if(materiaIds.length){
+      const {data:mats} = await sb.from('materias').select('docente_id').in('id', materiaIds);
+      mats?.forEach(m=> idsContactos.add(m.docente_id));
+    }
+  } else {
+    const {data:misMaterias} = await sb.from('materias').select('id').eq('docente_id', estado.perfil.id);
+    const materiaIds = (misMaterias||[]).map(m=>m.id);
+    if(materiaIds.length){
+      const {data:insc} = await sb.from('inscripciones').select('estudiante_id').in('materia_id', materiaIds);
+      insc?.forEach(i=> idsContactos.add(i.estudiante_id));
+    }
+  }
+
+  idsContactos.delete(estado.perfil.id);
+  const ids = [...idsContactos];
+  const cont = document.getElementById('lista-contactos');
+  if(!ids.length){
+    cont.innerHTML = `<div class="vacio" style="padding:24px 14px;">Aún no tienes contactos. Envía una solicitud desde el perfil de alguien, o espera a inscribirte / que te inscriban a una materia.</div>`;
+    return;
+  }
+  const faltantes = ids.filter(id=>!estado.perfilesCache[id]);
+  if(faltantes.length){
+    const {data:pf} = await sb.from('perfiles').select('*').in('id', faltantes);
+    pf?.forEach(p=> estado.perfilesCache[p.id]=p);
+  }
+  estado.contactos = ids.map(id=>estado.perfilesCache[id]).filter(Boolean);
+  cont.innerHTML = estado.contactos.map(p=>`
+    <div class="contacto ${estado.chatActivo===p.id?'activo':''}" onclick="abrirChatCon('${p.id}')">
+      <div class="avatar" style="width:38px;height:38px;background:${p.rol==='docente'?'var(--rojo)':'var(--azul)'};color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.78rem;">${iniciales(p.nombres,p.apellidos)}</div>
+      <div style="min-width:0;">
+        <div class="nombre">${escapeHtml(p.nombres)} ${escapeHtml(p.apellidos)}</div>
+        <div class="ultimo">${p.rol==='docente'?'Docente':'Estudiante'}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+async function abrirChatCon(userId){
+  estado.chatActivo = userId;
+  document.querySelectorAll('.contacto').forEach(c=>c.classList.remove('activo'));
+  await cargarContactos(); // refresca resaltado
+  await pintarVentanaChat(userId);
+}
+
+async function pintarVentanaChat(userId){
+  const p = estado.perfilesCache[userId] || await obtenerPerfil(userId);
+  const {data:mensajes} = await sb.from('mensajes').select('*')
+    .or(`and(de_id.eq.${estado.perfil.id},para_id.eq.${userId}),and(de_id.eq.${userId},para_id.eq.${estado.perfil.id})`)
+    .order('creado_en',{ascending:true});
+
+  // marcar como leídos los que me enviaron
+  const noLeidos = (mensajes||[]).filter(m=>m.para_id===estado.perfil.id && !m.leido);
+  if(noLeidos.length){
+    await sb.from('mensajes').update({leido:true}).in('id', noLeidos.map(m=>m.id));
+  }
+
+  const avisosRapidosHtml = estado.perfil.rol==='docente' ? `
+    <div class="avisos-rapidos">
+      ${AVISOS_RAPIDOS.map(a=>`<button class="aviso-rapido" onclick="document.getElementById('entrada-mensaje').value=${JSON.stringify(a)}">${escapeHtml(a)}</button>`).join('')}
+    </div>` : '';
+
+  const ventana = document.getElementById('ventana-chat');
+  ventana.innerHTML = `
+    <div class="chat-cab">
+      <div class="avatar" style="width:34px;height:34px;background:var(--azul);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.75rem;">${iniciales(p.nombres,p.apellidos)}</div>
+      <div>
+        <div class="nombre" style="font-weight:700;font-size:.9rem;">${escapeHtml(p.nombres)} ${escapeHtml(p.apellidos)}</div>
+        <div class="texto-chico texto-suave">${p.rol==='docente'?'Docente':'Estudiante'}</div>
+      </div>
+    </div>
+    <div class="chat-mensajes" id="chat-mensajes">
+      ${(mensajes||[]).map(m=>`
+        <div class="burbuja ${m.de_id===estado.perfil.id?'mio':'otro'}">
+          ${escapeHtml(m.contenido)}
+          <span class="hora">${fmtHora(m.creado_en)}</span>
+        </div>
+      `).join('') || '<div class="texto-suave texto-chico" style="text-align:center;margin-top:20px;">Inicia la conversación 👋</div>'}
+    </div>
+    ${avisosRapidosHtml}
+    <div class="chat-entrada">
+      <input id="entrada-mensaje" placeholder="Escribe un mensaje..." onkeydown="if(event.key==='Enter'){enviarMensaje('${userId}')}">
+      <button class="btn btn-azul" onclick="enviarMensaje('${userId}')">Enviar</button>
+    </div>
+  `;
+  const cajaMsj = document.getElementById('chat-mensajes');
+  cajaMsj.scrollTop = cajaMsj.scrollHeight;
+}
+
+async function enviarMensaje(paraId){
+  const input = document.getElementById('entrada-mensaje');
+  const texto = input.value.trim();
+  if(!texto) return;
+  input.value='';
+  const {error} = await sb.from('mensajes').insert({de_id:estado.perfil.id, para_id:paraId, contenido:texto});
+  if(error){ alert(error.message); return; }
+  // notificación de mensaje nuevo (ligera)
+  await pintarVentanaChat(paraId);
+}
+
+/* =====================================================================
+   ESTUDIANTE: MATERIAS Y NOTAS
+   ===================================================================== */
+let temporizadorMaterias=null;
+function buscarMateriasDisponibles(){
+  clearTimeout(temporizadorMaterias);
+  temporizadorMaterias = setTimeout(async ()=>{
+    const q = document.getElementById('buscar-materia').value.trim();
+    const cont = document.getElementById('resultado-materias');
+    if(!q){ cont.innerHTML=''; return; }
+    const {data} = await sb.from('materias').select('*').ilike('nombre', `%${q}%`).limit(10);
+    if(!data?.length){ cont.innerHTML = `<div class="texto-suave texto-chico">Sin resultados.</div>`; return; }
+    const idsDoc = [...new Set(data.map(m=>m.docente_id))].filter(id=>!estado.perfilesCache[id]);
+    if(idsDoc.length){
+      const {data:pf} = await sb.from('perfiles').select('*').in('id', idsDoc);
+      pf?.forEach(p=> estado.perfilesCache[p.id]=p);
+    }
+    cont.innerHTML = data.map(m=>{
+      const doc = estado.perfilesCache[m.docente_id]||{};
+      return `<div class="persona-fila" style="border:1px solid var(--borde);border-radius:10px;">
+        <div class="crecer">
+          <div class="nombre texto-chico">${escapeHtml(m.nombre)}</div>
+          <div class="sub">${escapeHtml(m.turno)} · Paralelo ${escapeHtml(m.paralelo)} · ${escapeHtml(m.gestion)} · Doc. ${escapeHtml(doc.nombres||'')} ${escapeHtml(doc.apellidos||'')}</div>
+        </div>
+        <button class="btn btn-primario btn-chico" onclick="inscribirme('${m.id}')">Inscribirme</button>
+      </div>`;
+    }).join('');
+  }, 300);
+}
+
+async function inscribirme(materiaId){
+  const {error} = await sb.from('inscripciones').insert({materia_id:materiaId, estudiante_id:estado.perfil.id});
+  if(error){ alert(error.message.includes('duplicate') ? 'Ya estás inscrito en esta materia.' : error.message); return; }
+  document.getElementById('buscar-materia').value='';
+  document.getElementById('resultado-materias').innerHTML='';
+  cargarMateriasEstudiante();
+}
+
+async function cargarMateriasEstudiante(){
+  const {data:insc} = await sb.from('inscripciones').select('materia_id').eq('estudiante_id', estado.perfil.id);
+  const cont = document.getElementById('lista-mis-materias');
+  if(!insc?.length){
+    cont.innerHTML = `<div class="tarjeta vacio"><div class="icono-vacio">📚</div>Todavía no estás inscrito a ninguna materia. Búscala arriba para inscribirte.</div>`;
+    return;
+  }
+  const materiaIds = insc.map(i=>i.materia_id);
+  const {data:materias} = await sb.from('materias').select('*').in('id', materiaIds);
+  const idsDoc = [...new Set((materias||[]).map(m=>m.docente_id))];
+  const {data:docentes} = await sb.from('perfiles').select('*').in('id', idsDoc);
+  const {data:notas} = await sb.from('notas').select('*').eq('estudiante_id', estado.perfil.id).in('materia_id', materiaIds);
+
+  cont.innerHTML = (materias||[]).map(m=>{
+    const doc = docentes?.find(d=>d.id===m.docente_id) || {};
+    const notasMat = (notas||[]).filter(n=>n.materia_id===m.id);
+    const filas = [1,2,3].map(p=>{
+      const n = notasMat.find(x=>x.parcial===p);
+      return `<tr><td>Parcial ${p}</td><td>${n? n.promedio.toFixed(1) : '—'}</td></tr>`;
+    }).join('');
+    const promFinal = notasMat.length ? (notasMat.reduce((a,n)=>a+Number(n.promedio),0)/notasMat.length).toFixed(1) : null;
+    return `
+    <div class="tarjeta materia-tarjeta">
+      <div class="fila entre">
+        <div>
+          <h4>${escapeHtml(m.nombre)}</h4>
+          <div class="texto-chico texto-suave">${escapeHtml(m.turno)} · Paralelo ${escapeHtml(m.paralelo)} · ${escapeHtml(m.gestion)} · Doc. ${escapeHtml(doc.nombres||'')} ${escapeHtml(doc.apellidos||'')}</div>
+        </div>
+        ${promFinal ? `<div class="nota-final-badge">${promFinal}/100</div>` : `<span class="chip">Sin notas aún</span>`}
+      </div>
+      <table class="tabla" style="margin-top:12px;">
+        <thead><tr><th>Parcial</th><th>Nota (promedio de 6 rubros)</th></tr></thead>
+        <tbody>${filas}</tbody>
+      </table>
+    </div>`;
+  }).join('');
+}
+
+/* =====================================================================
+   DOCENTE: MATERIAS
+   ===================================================================== */
+async function crearMateria(){
+  const nombre = document.getElementById('nm-nombre').value.trim();
+  const turno = document.getElementById('nm-turno').value;
+  const paralelo = document.getElementById('nm-paralelo').value.trim();
+  const gestion = document.getElementById('nm-gestion').value.trim();
+  if(!nombre || !paralelo || !gestion){ alert('Completa todos los campos de la materia.'); return; }
+  const {error} = await sb.from('materias').insert({docente_id: estado.perfil.id, nombre, turno, paralelo, gestion});
+  if(error){ alert(error.message); return; }
+  document.getElementById('nm-nombre').value='';
+  document.getElementById('nm-paralelo').value='';
+  document.getElementById('nm-gestion').value='';
+  cargarMateriasDocente();
+}
+
+async function cargarMateriasDocente(){
+  const {data:materias} = await sb.from('materias').select('*').eq('docente_id', estado.perfil.id).order('creado_en',{ascending:false});
+  estado.materiasCache = materias || [];
+  const cont = document.getElementById('lista-materias-docente');
+  if(!materias?.length){
+    cont.innerHTML = `<div class="tarjeta vacio"><div class="icono-vacio">📖</div>Aún no creaste ninguna materia.</div>`;
+    return;
+  }
+  const materiaIds = materias.map(m=>m.id);
+  const {data:insc} = await sb.from('inscripciones').select('materia_id').in('materia_id', materiaIds);
+  cont.innerHTML = materias.map(m=>{
+    const nAlumnos = (insc||[]).filter(i=>i.materia_id===m.id).length;
+    return `
+    <div class="tarjeta materia-tarjeta">
+      <div class="fila entre">
+        <div>
+          <h4>${escapeHtml(m.nombre)}</h4>
+          <div class="texto-chico texto-suave">${escapeHtml(m.turno)} · Paralelo ${escapeHtml(m.paralelo)} · ${escapeHtml(m.gestion)}</div>
+        </div>
+        <span class="chip">${nAlumnos} estudiante${nAlumnos===1?'':'s'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* =====================================================================
+   DOCENTE: CALIFICAR
+   ===================================================================== */
+async function prepararVistaCalificar(){
+  const {data:materias} = await sb.from('materias').select('*').eq('docente_id', estado.perfil.id).order('nombre');
+  estado.materiasCache = materias || [];
+  const sel = document.getElementById('sel-materia-calificar');
+  sel.innerHTML = materias?.length
+    ? materias.map(m=>`<option value="${m.id}">${escapeHtml(m.nombre)} — ${escapeHtml(m.paralelo)}</option>`).join('')
+    : `<option value="">No tienes materias creadas</option>`;
+  if(materias?.length) alSeleccionarMateriaCalificar();
+  else document.getElementById('panel-calificar').innerHTML = `<div class="tarjeta vacio">Primero crea una materia en "Mis materias".</div>`;
+}
+
+async function alSeleccionarMateriaCalificar(){
+  const materiaId = document.getElementById('sel-materia-calificar').value;
+  const panel = document.getElementById('panel-calificar');
+  if(!materiaId){ panel.innerHTML=''; return; }
+  const {data:insc} = await sb.from('inscripciones').select('estudiante_id').eq('materia_id', materiaId);
+  if(!insc?.length){
+    panel.innerHTML = `<div class="tarjeta vacio">Todavía ningún estudiante se inscribió a esta materia.</div>`;
+    return;
+  }
+  const idsEst = insc.map(i=>i.estudiante_id);
+  const {data:estudiantes} = await sb.from('perfiles').select('*').in('id', idsEst).order('apellidos');
+
+  panel.innerHTML = `
+    <div class="tarjeta" style="padding:0;overflow:hidden;">
+      <table class="tabla">
+        <thead><tr><th>Estudiante</th><th>Carrera</th><th></th></tr></thead>
+        <tbody>
+          ${estudiantes.map(e=>`
+            <tr>
+              <td>${escapeHtml(e.nombres)} ${escapeHtml(e.apellidos)}</td>
+              <td>${escapeHtml(e.carrera||'—')}</td>
+              <td><button class="btn btn-azul btn-chico" onclick="abrirFormularioNotas('${materiaId}','${e.id}')">Calificar</button></td>
+            </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+    <div id="form-notas-wrap" style="margin-top:18px;"></div>
+  `;
+}
+
+async function abrirFormularioNotas(materiaId, estudianteId){
+  const {data:notas} = await sb.from('notas').select('*').eq('materia_id',materiaId).eq('estudiante_id',estudianteId);
+  const est = await obtenerPerfil(estudianteId);
+  const wrap = document.getElementById('form-notas-wrap');
+
+  function pintar(parcialActivo){
+    const nota = (notas||[]).find(n=>n.parcial===parcialActivo) || {};
+    wrap.innerHTML = `
+      <div class="tarjeta" style="padding:20px;max-width:640px;">
+        <h4 style="margin:0 0 4px;color:var(--azul);">Calificando a ${escapeHtml(est.nombres)} ${escapeHtml(est.apellidos)}</h4>
+        <p class="texto-suave texto-chico" style="margin:0 0 16px;">Ingresa cada rubro sobre 100. La nota del parcial es el promedio de los 6 rubros.</p>
+        <div class="parciales-tabs">
+          ${[1,2,3].map(p=>`<button class="ptab ${p===parcialActivo?'activo':''}" onclick="cambiarParcialForm(${p})">Parcial ${p}</button>`).join('')}
+        </div>
+        <div class="grid-rubros">
+          ${RUBROS.map(r=>`
+            <div class="campo">
+              <label>${r.etiqueta}</label>
+              <input type="number" min="0" max="100" id="rub-${r.clave}" value="${nota[r.clave] ?? ''}">
+            </div>`).join('')}
+        </div>
+        <div class="promedio-caja">
+          Promedio del parcial ${parcialActivo}: <b id="promedio-vivo">${nota.promedio?.toFixed?.(1) ?? '0.0'}</b> / 100
+        </div>
+        <button class="btn btn-primario" onclick="guardarNota('${materiaId}','${estudianteId}',${parcialActivo})">Guardar y notificar al estudiante</button>
+      </div>
+    `;
+    RUBROS.forEach(r=>{
+      document.getElementById(`rub-${r.clave}`).addEventListener('input', actualizarPromedioVivo);
+    });
+  }
+  window.cambiarParcialForm = (p)=> pintar(p);
+  pintar(1);
+}
+
+function actualizarPromedioVivo(){
+  const valores = {};
+  RUBROS.forEach(r=> valores[r.clave] = document.getElementById(`rub-${r.clave}`).value);
+  document.getElementById('promedio-vivo').innerText = promedioRubros(valores).toFixed(1);
+}
+
+async function guardarNota(materiaId, estudianteId, parcial){
+  const valores = {materia_id: materiaId, estudiante_id: estudianteId, parcial};
+  RUBROS.forEach(r=>{
+    valores[r.clave] = Number(document.getElementById(`rub-${r.clave}`).value) || 0;
+  });
+  valores.promedio = promedioRubros(valores);
+  valores.actualizado_en = new Date().toISOString();
+
+  const {error} = await sb.from('notas').upsert(valores, {onConflict:'materia_id,estudiante_id,parcial'});
+  if(error){ alert(error.message); return; }
+
+  const materia = estado.materiasCache.find(m=>m.id===materiaId);
+  await sb.from('notificaciones').insert({
+    usuario_id: estudianteId, tipo:'nota',
+    titulo: `Nota publicada — Parcial ${parcial}`,
+    mensaje: `Tu nota del parcial ${parcial} en ${materia?.nombre||'tu materia'} ya está disponible: ${valores.promedio.toFixed(1)}/100.`
+  });
+
+  alert('Nota guardada y estudiante notificado ✅');
+  alSeleccionarMateriaCalificar();
+}
+
+/* =====================================================================
+   DOCENTE: ASISTENCIA DIARIA
+   ===================================================================== */
+async function prepararVistaAsistencia(){
+  const {data:materias} = await sb.from('materias').select('*').eq('docente_id', estado.perfil.id).order('nombre');
+  estado.materiasCache = materias || [];
+  const sel = document.getElementById('sel-materia-asistencia');
+  sel.innerHTML = materias?.length
+    ? materias.map(m=>`<option value="${m.id}">${escapeHtml(m.nombre)} — ${escapeHtml(m.paralelo)}</option>`).join('')
+    : `<option value="">No tienes materias creadas</option>`;
+  const fechaInput = document.getElementById('fecha-asistencia');
+  if(!fechaInput.value) fechaInput.value = new Date().toISOString().slice(0,10);
+  if(materias?.length) cargarAsistencia();
+  else document.getElementById('panel-asistencia').innerHTML = `<div class="tarjeta vacio">Primero crea una materia.</div>`;
+}
+
+async function cargarAsistencia(){
+  const materiaId = document.getElementById('sel-materia-asistencia').value;
+  const fecha = document.getElementById('fecha-asistencia').value;
+  const panel = document.getElementById('panel-asistencia');
+  if(!materiaId){ panel.innerHTML=''; return; }
+
+  const {data:insc} = await sb.from('inscripciones').select('estudiante_id').eq('materia_id', materiaId);
+  if(!insc?.length){ panel.innerHTML = `<div class="tarjeta vacio">Nadie inscrito todavía en esta materia.</div>`; return; }
+  const idsEst = insc.map(i=>i.estudiante_id);
+  const {data:estudiantes} = await sb.from('perfiles').select('*').in('id', idsEst).order('apellidos');
+  const {data:registros} = await sb.from('asistencia_diaria').select('*').eq('materia_id', materiaId).eq('fecha', fecha);
+
+  panel.innerHTML = `
+    <div class="tarjeta" style="padding:0;overflow:hidden;">
+      <table class="tabla">
+        <thead><tr><th>Estudiante</th><th>Presente</th><th>Participó</th></tr></thead>
+        <tbody>
+          ${estudiantes.map(e=>{
+            const r = registros?.find(x=>x.estudiante_id===e.id);
+            return `<tr>
+              <td>${escapeHtml(e.nombres)} ${escapeHtml(e.apellidos)}</td>
+              <td><input type="checkbox" id="pres-${e.id}" ${r? (r.presente?'checked':'') : 'checked'} style="width:auto;"></td>
+              <td><input type="checkbox" id="part-${e.id}" ${r?.participo?'checked':''} style="width:auto;"></td>
+            </tr>`;
+          }).join('')}
+        </tbody>
+      </table>
+    </div>
+    <button class="btn btn-primario" style="margin-top:14px;" onclick="guardarAsistencia('${materiaId}','${fecha}', ${JSON.stringify(idsEst)})">Guardar asistencia del día</button>
+  `;
+}
+
+async function guardarAsistencia(materiaId, fecha, idsEst){
+  const filas = idsEst.map(id=>({
+    materia_id: materiaId, estudiante_id: id, fecha,
+    presente: document.getElementById(`pres-${id}`).checked,
+    participo: document.getElementById(`part-${id}`).checked,
+  }));
+  const {error} = await sb.from('asistencia_diaria').upsert(filas, {onConflict:'materia_id,estudiante_id,fecha'});
+  if(error){ alert(error.message); return; }
+  alert('Asistencia guardada ✅');
+}
+
+/* =====================================================================
+   NOTIFICACIONES
+   ===================================================================== */
+async function cargarNotificaciones(soloContador){
+  const {data} = await sb.from('notificaciones').select('*').eq('usuario_id', estado.perfil.id).order('creado_en',{ascending:false}).limit(30);
+  const noLeidas = (data||[]).filter(n=>!n.leido).length;
+  const punto = document.getElementById('punto-notif');
+  punto.innerText = noLeidas;
+  punto.classList.toggle('oculto', noLeidas===0);
+  if(soloContador) return data;
+
+  const lista = document.getElementById('lista-notificaciones');
+  lista.innerHTML = data?.length ? data.map(n=>`
+    <div class="notif-item ${n.leido?'':'no-leido'}">
+      <b>${escapeHtml(n.titulo)}</b>
+      ${escapeHtml(n.mensaje)}
+      <div class="texto-chico texto-suave" style="margin-top:4px;">${fmtFecha(n.creado_en)} · ${fmtHora(n.creado_en)}</div>
+    </div>
+  `).join('') : `<div class="notif-item">No tienes notificaciones.</div>`;
+  return data;
+}
+
+async function toggleNotificaciones(){
+  const el = document.getElementById('lista-notificaciones');
+  const abrir = el.classList.contains('oculto');
+  el.classList.toggle('oculto');
+  if(abrir){
+    await cargarNotificaciones();
+    await sb.from('notificaciones').update({leido:true}).eq('usuario_id', estado.perfil.id).eq('leido', false);
+    cargarNotificaciones(true);
+  }
+}
+document.addEventListener('click', (e)=>{
+  const camp = document.querySelector('.campanas');
+  if(camp && !camp.contains(e.target)) document.getElementById('lista-notificaciones').classList.add('oculto');
+});
+
+/* =====================================================================
+   TIEMPO REAL (Supabase Realtime)
+   ===================================================================== */
+function suscribirRealtimeGlobal(){
+  sb.channel('canal-publico')
+    .on('postgres_changes', {event:'*', schema:'public', table:'publicaciones'}, ()=>{
+      if(estado.vistaActual==='feed') cargarPublicaciones();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'likes_publicacion'}, ()=>{
+      if(estado.vistaActual==='feed') cargarPublicaciones();
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'solicitudes_amistad'}, (payload)=>{
+      const registro = payload.new?.de_id ? payload.new : payload.old;
+      if(registro.de_id===estado.perfil.id || registro.para_id===estado.perfil.id){
+        cargarSolicitudes(estado.vistaActual!=='solicitudes');
+      }
+    })
+    .on('postgres_changes', {event:'*', schema:'public', table:'notificaciones', filter:`usuario_id=eq.${estado.perfil.id}`}, ()=>{
+      cargarNotificaciones(estado.vistaActual!=='notificaciones');
+    })
+    .on('postgres_changes', {event:'INSERT', schema:'public', table:'mensajes'}, (payload)=>{
+      const m = payload.new;
+      const esParaMi = m.para_id===estado.perfil.id, esDeMi = m.de_id===estado.perfil.id;
+      if(!esParaMi && !esDeMi) return;
+      const otro = esDeMi ? m.para_id : m.de_id;
+      if(estado.vistaActual==='chat' && estado.chatActivo===otro){
+        pintarVentanaChat(otro);
+      } else if(esParaMi){
+        marcarPuntoChat();
+      }
+      if(estado.vistaActual==='chat') cargarContactos();
+    })
+    .subscribe();
+}
+
+async function marcarPuntoChat(){
+  const {count} = await sb.from('mensajes').select('*',{count:'exact',head:true}).eq('para_id', estado.perfil.id).eq('leido', false);
+  ['punto-chat','punto-chat-d'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el){ el.innerText = count||0; el.classList.toggle('oculto', !count); }
+  });
+}
+marcarPuntoChatIntervalo();
+function marcarPuntoChatIntervalo(){ setInterval(()=>{ if(estado.perfil) marcarPuntoChat(); }, 15000); }
+
+/* =====================================================================
+   ARRANQUE
+   ===================================================================== */
+sb.auth.onAuthStateChange((_evento, _sesion)=>{ /* la sesión inicial ya se maneja en iniciar() */ });
+iniciar();
+</script>
+</body>
+</html>
